@@ -1,0 +1,28 @@
+#root {
+  background-color: #F5F8FF;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app-main-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app-main-left-container {
+  width: 25%;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.app-main-right-container {
+  width: 75%;
+  padding: 0 4rem;
+  box-sizing: border-box;
+}
