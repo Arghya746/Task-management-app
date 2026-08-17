@@ -1,6 +1,11 @@
+
 import React, { useState } from 'react';
 import Sidenav from '../../components/sidenav/Sidenav';
-import { CircularProgress, CircularProgressLabel, Tag } from '@chakra-ui/react';
+import {
+    CircularProgress,
+    CircularProgressLabel,
+    Tag,
+} from '@chakra-ui/react';
 import './tasks.css';
 
 import pending from '../../assets/tasks/Pending.png';
@@ -27,12 +32,12 @@ function Tasks() {
         setIsAddTaskModalOpen(true);
     };
 
-    const openReadTaskModal = () => {
-        setIsReadTaskModalOpen(true);
-    };
-
     const closeAddTaskModal = () => {
         setIsAddTaskModalOpen(false);
+    };
+
+    const openReadTaskModal = () => {
+        setIsReadTaskModalOpen(true);
     };
 
     const closeReadTaskModal = () => {
@@ -52,10 +57,13 @@ function Tasks() {
             />
 
             <div className="app-main-container">
+
+                {/* SIDENAV */}
                 <div className="app-main-left-container">
                     <Sidenav />
                 </div>
 
+                {/* MAIN CONTENT */}
                 <div className="app-main-right-container">
                     <Navbar />
 
@@ -66,9 +74,12 @@ function Tasks() {
 
                             {/* TASK STATISTICS */}
                             <div className="task-status-card-container">
+
                                 <div className="add-task-inner-div">
                                     <FcStatistics className="task-stats" />
-                                    <p className="todo-text">Tasks Statistics</p>
+                                    <p className="todo-text">
+                                        Tasks Statistics
+                                    </p>
                                 </div>
 
                                 <div className="stat-first-row">
@@ -82,7 +93,9 @@ function Tasks() {
 
                                         <div>
                                             <p className="stats-num">1200</p>
-                                            <p className="stats-text">Total Task</p>
+                                            <p className="stats-text">
+                                                Total Task
+                                            </p>
                                         </div>
                                     </div>
 
@@ -95,7 +108,9 @@ function Tasks() {
 
                                         <div>
                                             <p className="stats-num">1200</p>
-                                            <p className="stats-text">Completed</p>
+                                            <p className="stats-text">
+                                                Completed
+                                            </p>
                                         </div>
                                     </div>
 
@@ -112,7 +127,9 @@ function Tasks() {
 
                                         <div>
                                             <p className="stats-num">1200</p>
-                                            <p className="stats-text">In Progress</p>
+                                            <p className="stats-text">
+                                                In Progress
+                                            </p>
                                         </div>
                                     </div>
 
@@ -125,7 +142,9 @@ function Tasks() {
 
                                         <div>
                                             <p className="stats-num">1200</p>
-                                            <p className="stats-text">Pending</p>
+                                            <p className="stats-text">
+                                                Pending
+                                            </p>
                                         </div>
                                     </div>
 
@@ -138,8 +157,14 @@ function Tasks() {
                                 <div className="add-task-main-div">
 
                                     <div className="add-task-inner-div">
-                                        <img src={pending} alt="Pending tasks" />
-                                        <p className="todo-text">To-Do Tasks</p>
+                                        <img
+                                            src={pending}
+                                            alt="Pending tasks"
+                                        />
+
+                                        <p className="todo-text">
+                                            To-Do Tasks
+                                        </p>
                                     </div>
 
                                     <button
@@ -160,8 +185,9 @@ function Tasks() {
 
                                     <div className="task-desc-container">
                                         <p className="task-desc">
-                                            Buy gifts on the way and pick up cake from
-                                            the bakery. (6 PM | Fresh Elements)
+                                            Buy gifts on the way and pick up
+                                            cake from the bakery.
+                                            (6 PM | Fresh Elements)
                                         </p>
                                     </div>
 
@@ -204,8 +230,9 @@ function Tasks() {
 
                                     <div className="task-desc-container">
                                         <p className="task-desc">
-                                            Buy gifts on the way and pick up cake from
-                                            the bakery. (6 PM | Fresh Elements)
+                                            Buy gifts on the way and pick up
+                                            cake from the bakery.
+                                            (6 PM | Fresh Elements)
                                         </p>
                                     </div>
 
@@ -247,8 +274,14 @@ function Tasks() {
                             <div className="task-status-card-container">
 
                                 <div className="add-task-inner-div">
-                                    <img src={complete} alt="Completed tasks" />
-                                    <p className="todo-text">Tasks Status</p>
+                                    <img
+                                        src={complete}
+                                        alt="Completed tasks"
+                                    />
+
+                                    <p className="todo-text">
+                                        Tasks Status
+                                    </p>
                                 </div>
 
                                 <div className="task-status-progress-main-container">
@@ -264,7 +297,9 @@ function Tasks() {
                                             </CircularProgressLabel>
                                         </CircularProgress>
 
-                                        <p className="completed">Completed</p>
+                                        <p className="completed">
+                                            Completed
+                                        </p>
                                     </div>
 
                                     <div>
@@ -278,7 +313,9 @@ function Tasks() {
                                             </CircularProgressLabel>
                                         </CircularProgress>
 
-                                        <p className="progress">In Progress</p>
+                                        <p className="progress">
+                                            In Progress
+                                        </p>
                                     </div>
 
                                     <div>
@@ -292,7 +329,9 @@ function Tasks() {
                                             </CircularProgressLabel>
                                         </CircularProgress>
 
-                                        <p className="pending">Pending</p>
+                                        <p className="pending">
+                                            Pending
+                                        </p>
                                     </div>
 
                                 </div>
@@ -304,7 +343,11 @@ function Tasks() {
                                 <div className="add-task-main-div">
 
                                     <div className="add-task-inner-div">
-                                        <img src={book} alt="In progress tasks" />
+                                        <img
+                                            src={book}
+                                            alt="In progress tasks"
+                                        />
+
                                         <p className="todo-text">
                                             In Progress Tasks
                                         </p>
@@ -320,8 +363,9 @@ function Tasks() {
 
                                     <div className="task-desc-container">
                                         <p className="task-desc">
-                                            Buy gifts on the way and pick up cake from
-                                            the bakery. (6 PM | Fresh Elements)
+                                            Buy gifts on the way and pick up
+                                            cake from the bakery.
+                                            (6 PM | Fresh Elements)
                                         </p>
                                     </div>
 
@@ -357,6 +401,7 @@ function Tasks() {
                                         </div>
 
                                     </div>
+
                                 </div>
                             </div>
 
@@ -366,7 +411,11 @@ function Tasks() {
                                 <div className="add-task-main-div">
 
                                     <div className="add-task-inner-div">
-                                        <img src={book} alt="Completed tasks" />
+                                        <img
+                                            src={book}
+                                            alt="Completed tasks"
+                                        />
+
                                         <p className="todo-text">
                                             Completed Tasks
                                         </p>
@@ -382,8 +431,9 @@ function Tasks() {
 
                                     <div className="task-desc-container">
                                         <p className="task-desc">
-                                            Buy gifts on the way and pick up cake from
-                                            the bakery. (6 PM | Fresh Elements)
+                                            Buy gifts on the way and pick up
+                                            cake from the bakery.
+                                            (6 PM | Fresh Elements)
                                         </p>
                                     </div>
 

@@ -12,6 +12,7 @@ const projectRoute = require('./routes/project');
 const taskRoute = require('./routes/task');
 const timesheetRoute = require('./routes/timesheet');
 const attendanceRoute = require('./routes/attendance');
+const aiRoute = require('./routes/ai'); // AI route
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api', projectRoute);
 app.use('/api', taskRoute);
 app.use('/api', timesheetRoute);
 app.use('/api', attendanceRoute);
+app.use('/api', aiRoute); // AI API route
 
 // Backend health-check route
 app.get('/', (req, res) => {
