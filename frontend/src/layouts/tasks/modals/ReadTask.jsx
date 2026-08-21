@@ -30,7 +30,6 @@ import {
     FiCalendar,
 } from 'react-icons/fi';
 
-
 function ReadTaskModal({
     isOpen,
     onClose,
@@ -39,7 +38,6 @@ function ReadTaskModal({
 }) {
 
     const toast = useToast();
-
 
     // =====================================================
     // STATES
@@ -53,6 +51,13 @@ function ReadTaskModal({
     const [deleteLoading, setDeleteLoading] =
         useState(false);
 
+    // =====================================================
+    // API CONFIGURATION - CREATE REACT APP
+    // =====================================================
+
+    const API_URL =
+        process.env.REACT_APP_API_URL ||
+        'http://localhost:8000';
 
     // =====================================================
     // GET SINGLE TASK
@@ -72,27 +77,23 @@ function ReadTaskModal({
 
         }
 
-
         try {
 
             setLoading(true);
-
 
             console.log(
                 'Fetching task:',
                 taskId
             );
 
-
             const token =
                 localStorage.getItem(
                     'tm_token'
                 );
 
-
             const response =
                 await axios.get(
-                    `http://localhost:8000/api/task/${taskId}`,
+                    `${API_URL}/api/task/${taskId}`,
                     {
                         headers: token
                             ? {
@@ -103,17 +104,14 @@ function ReadTaskModal({
                     }
                 );
 
-
             console.log(
                 'Selected task:',
                 response.data
             );
 
-
             setTask(
                 response.data
             );
-
 
         } catch (error) {
 
@@ -122,9 +120,7 @@ function ReadTaskModal({
                 error
             );
 
-
             setTask(null);
-
 
             toast({
                 title:
@@ -140,7 +136,6 @@ function ReadTaskModal({
                 isClosable: true,
             });
 
-
         } finally {
 
             setLoading(false);
@@ -148,7 +143,6 @@ function ReadTaskModal({
         }
 
     };
-
 
     // =====================================================
     // LOAD TASK WHEN MODAL OPENS
@@ -165,7 +159,6 @@ function ReadTaskModal({
 
         }
 
-
         if (!isOpen) {
 
             setTask(null);
@@ -176,7 +169,6 @@ function ReadTaskModal({
         isOpen,
         taskId,
     ]);
-
 
     // =====================================================
     // DELETE TASK
@@ -193,12 +185,10 @@ function ReadTaskModal({
 
         }
 
-
         const confirmDelete =
             window.confirm(
                 'Are you sure you want to delete this task?'
             );
-
 
         if (!confirmDelete) {
 
@@ -206,21 +196,18 @@ function ReadTaskModal({
 
         }
 
-
         try {
 
             setDeleteLoading(true);
-
 
             const token =
                 localStorage.getItem(
                     'tm_token'
                 );
 
-
             const response =
                 await axios.delete(
-                    `http://localhost:8000/api/task/${taskId}`,
+                    `${API_URL}/api/task/${taskId}`,
                     {
                         headers: token
                             ? {
@@ -230,7 +217,6 @@ function ReadTaskModal({
                             : {},
                     }
                 );
-
 
             toast({
                 title:
@@ -246,9 +232,7 @@ function ReadTaskModal({
                 isClosable: true,
             });
 
-
             setTask(null);
-
 
             if (onTaskDeleted) {
 
@@ -258,9 +242,7 @@ function ReadTaskModal({
 
             }
 
-
             onClose();
-
 
         } catch (error) {
 
@@ -268,7 +250,6 @@ function ReadTaskModal({
                 'Delete task error:',
                 error
             );
-
 
             toast({
                 title:
@@ -284,7 +265,6 @@ function ReadTaskModal({
                 isClosable: true,
             });
 
-
         } finally {
 
             setDeleteLoading(false);
@@ -292,7 +272,6 @@ function ReadTaskModal({
         }
 
     };
-
 
     // =====================================================
     // DATE FORMATTER
@@ -306,7 +285,6 @@ function ReadTaskModal({
 
         }
 
-
         return new Date(
             date
         ).toLocaleDateString(
@@ -319,7 +297,6 @@ function ReadTaskModal({
         );
 
     };
-
 
     // =====================================================
     // STATUS COLOR
@@ -348,7 +325,6 @@ function ReadTaskModal({
 
     };
 
-
     // =====================================================
     // PRIORITY COLOR
     // =====================================================
@@ -373,7 +349,6 @@ function ReadTaskModal({
 
     };
 
-
     // =====================================================
     // EMPLOYEE NAME
     // =====================================================
@@ -386,19 +361,11 @@ function ReadTaskModal({
 
         }
 
-
-        // Your API may return:
-        // name: "Arghya Singha"
-
         if (task.assignTo.name) {
 
             return task.assignTo.name;
 
         }
-
-
-        // Or:
-        // firstName + lastName
 
         const firstName =
             task.assignTo.firstName || '';
@@ -406,10 +373,8 @@ function ReadTaskModal({
         const lastName =
             task.assignTo.lastName || '';
 
-
         const fullName =
             `${firstName} ${lastName}`.trim();
-
 
         if (fullName) {
 
@@ -417,11 +382,13 @@ function ReadTaskModal({
 
         }
 
-
         return 'Not assigned';
 
     };
 
+    // =====================================================
+    // RENDER
+    // =====================================================
 
     return (
 
@@ -435,30 +402,19 @@ function ReadTaskModal({
 
             <ModalOverlay />
 
-
             <ModalContent>
 
-
-                {/* ================================================= */}
                 {/* HEADER */}
-                {/* ================================================= */}
 
                 <ModalHeader>
-
                     Task Details
-
                 </ModalHeader>
-
 
                 <ModalCloseButton />
 
-
-                {/* ================================================= */}
                 {/* BODY */}
-                {/* ================================================= */}
 
                 <ModalBody>
-
 
                     {/* LOADING */}
 
@@ -501,21 +457,16 @@ function ReadTaskModal({
                                     marginBottom: '8px',
                                 }}
                             >
-
                                 Task not found
-
                             </p>
-
 
                             <p
                                 style={{
                                     fontSize: '14px',
                                 }}
                             >
-
                                 This task may have been deleted
                                 or the task ID is invalid.
-
                             </p>
 
                         </div>
@@ -524,10 +475,7 @@ function ReadTaskModal({
 
                         <>
 
-
-                            {/* ================================================= */}
                             {/* MAIN TASK CARD */}
-                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -542,9 +490,6 @@ function ReadTaskModal({
                                 }}
                             >
 
-
-                                {/* TITLE */}
-
                                 <p
                                     style={{
                                         fontSize: '24px',
@@ -553,13 +498,8 @@ function ReadTaskModal({
                                         marginBottom: '14px',
                                     }}
                                 >
-
                                     {task.title}
-
                                 </p>
-
-
-                                {/* DESCRIPTION */}
 
                                 <div
                                     style={{
@@ -576,15 +516,10 @@ function ReadTaskModal({
                                             lineHeight: '1.7',
                                         }}
                                     >
-
                                         {task.description}
-
                                     </p>
 
                                 </div>
-
-
-                                {/* PRIORITY + STATUS */}
 
                                 <div
                                     style={{
@@ -603,11 +538,8 @@ function ReadTaskModal({
                                         }
                                         borderRadius="full"
                                     >
-
                                         {task.priority}
-
                                     </Tag>
-
 
                                     <Tag
                                         size="lg"
@@ -618,19 +550,14 @@ function ReadTaskModal({
                                         }
                                         borderRadius="full"
                                     >
-
                                         {task.status}
-
                                     </Tag>
 
                                 </div>
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* PROGRESS */}
-                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -656,13 +583,10 @@ function ReadTaskModal({
                                 >
 
                                     <CircularProgressLabel>
-
                                         {task.progress || 0}%
-
                                     </CircularProgressLabel>
 
                                 </CircularProgress>
-
 
                                 <div>
 
@@ -673,11 +597,8 @@ function ReadTaskModal({
                                             marginBottom: '5px',
                                         }}
                                     >
-
                                         Task Progress
-
                                     </p>
-
 
                                     <p
                                         style={{
@@ -685,23 +606,16 @@ function ReadTaskModal({
                                             fontSize: '14px',
                                         }}
                                     >
-
                                         This task is currently{' '}
-
                                         {task.progress || 0}%
-
                                         {' '}completed.
-
                                     </p>
 
                                 </div>
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* EMPLOYEE + PROJECT */}
-                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -712,7 +626,6 @@ function ReadTaskModal({
                                     gap: '15px',
                                 }}
                             >
-
 
                                 {/* EMPLOYEE */}
 
@@ -748,18 +661,14 @@ function ReadTaskModal({
 
                                     </div>
 
-
                                     <p
                                         style={{
                                             color: '#374151',
                                             fontWeight: '600',
                                         }}
                                     >
-
                                         {getEmployeeName()}
-
                                     </p>
-
 
                                     {task.assignTo?.role && (
 
@@ -770,15 +679,12 @@ function ReadTaskModal({
                                                 marginTop: '4px',
                                             }}
                                         >
-
                                             {task.assignTo.role}
-
                                         </p>
 
                                     )}
 
                                 </div>
-
 
                                 {/* PROJECT */}
 
@@ -814,27 +720,21 @@ function ReadTaskModal({
 
                                     </div>
 
-
                                     <p
                                         style={{
                                             color: '#374151',
                                             fontWeight: '600',
                                         }}
                                     >
-
                                         {task.project?.title ||
                                             'No project'}
-
                                     </p>
 
                                 </div>
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* TASK INFORMATION */}
-                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -854,11 +754,8 @@ function ReadTaskModal({
                                         marginBottom: '15px',
                                     }}
                                 >
-
                                     Task Information
-
                                 </p>
-
 
                                 <div
                                     style={{
@@ -867,9 +764,6 @@ function ReadTaskModal({
                                         gap: '14px',
                                     }}
                                 >
-
-
-                                    {/* CREATED */}
 
                                     <div
                                         style={{
@@ -887,21 +781,15 @@ function ReadTaskModal({
                                         />
 
                                         <p>
-
                                             <strong>
                                                 Created:
                                             </strong>{' '}
-
                                             {formatDate(
                                                 task.createdAt
                                             )}
-
                                         </p>
 
                                     </div>
-
-
-                                    {/* START DATE */}
 
                                     <div
                                         style={{
@@ -919,21 +807,15 @@ function ReadTaskModal({
                                         />
 
                                         <p>
-
                                             <strong>
                                                 Start Date:
                                             </strong>{' '}
-
                                             {formatDate(
                                                 task.startDate
                                             )}
-
                                         </p>
 
                                     </div>
-
-
-                                    {/* STATUS */}
 
                                     <div
                                         style={{
@@ -951,13 +833,10 @@ function ReadTaskModal({
                                         />
 
                                         <p>
-
                                             <strong>
                                                 Status:
                                             </strong>{' '}
-
                                             {task.status}
-
                                         </p>
 
                                     </div>
@@ -966,10 +845,7 @@ function ReadTaskModal({
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* AI SUMMARY */}
-                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -999,20 +875,16 @@ function ReadTaskModal({
                                         }}
                                     />
 
-
                                     <p
                                         style={{
                                             fontWeight: '700',
                                             color: '#6d28d9',
                                         }}
                                     >
-
                                         Task Summary
-
                                     </p>
 
                                 </div>
-
 
                                 <p
                                     style={{
@@ -1021,9 +893,7 @@ function ReadTaskModal({
                                         fontSize: '14px',
                                     }}
                                 >
-
                                     {task.description}
-
                                 </p>
 
                             </div>
@@ -1034,13 +904,9 @@ function ReadTaskModal({
 
                 </ModalBody>
 
-
-                {/* ================================================= */}
                 {/* FOOTER */}
-                {/* ================================================= */}
 
                 <ModalFooter>
-
 
                     <Button
                         variant="solid"
@@ -1050,11 +916,8 @@ function ReadTaskModal({
                         type="button"
                         onClick={onClose}
                     >
-
                         Close
-
                     </Button>
-
 
                     <Button
                         colorScheme="red"
@@ -1079,7 +942,6 @@ function ReadTaskModal({
                         ) : (
 
                             <>
-
                                 <MdDelete
                                     style={{
                                         marginRight: '6px',
@@ -1088,7 +950,6 @@ function ReadTaskModal({
                                 />
 
                                 Delete Task
-
                             </>
 
                         )}

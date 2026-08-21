@@ -1,5 +1,10 @@
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
+
 import axios from 'axios';
 
 import Sidenav from '../../components/sidenav/Sidenav';
@@ -16,6 +21,7 @@ import './tasks.css';
 import pending from '../../assets/tasks/Pending.png';
 import complete from '../../assets/tasks/complete.png';
 import book from '../../assets/tasks/Book.png';
+
 import totaltasks from '../../assets/tasks/totaltasks.png';
 import totalprogress from '../../assets/tasks/totalprogress.png';
 import totalpending from '../../assets/tasks/totalpending.png';
@@ -24,6 +30,7 @@ import totalcomplete from '../../assets/tasks/totalcomplete.png';
 import { IoReaderOutline } from 'react-icons/io5';
 import { FcStatistics } from 'react-icons/fc';
 import { IoMdAdd } from 'react-icons/io';
+
 import {
     FiZap,
     FiClock,
@@ -43,17 +50,31 @@ function Tasks() {
 
     const [tasks, setTasks] = useState([]);
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] =
+        useState(true);
 
-    const [isAddTaskModalOpen, setIsAddTaskModalOpen] =
-        useState(false);
+    const [
+        isAddTaskModalOpen,
+        setIsAddTaskModalOpen,
+    ] = useState(false);
 
-    const [isReadTaskModalOpen, setIsReadTaskModalOpen] =
-        useState(false);
+    const [
+        isReadTaskModalOpen,
+        setIsReadTaskModalOpen,
+    ] = useState(false);
 
-    const [selectedTaskId, setSelectedTaskId] =
-        useState(null);
+    const [
+        selectedTaskId,
+        setSelectedTaskId,
+    ] = useState(null);
 
+    // =====================================================
+    // API CONFIGURATION - CREATE REACT APP
+    // =====================================================
+
+    const API_URL =
+        process.env.REACT_APP_API_URL ||
+        'http://localhost:8000';
 
     // =====================================================
     // FETCH TASKS
@@ -65,18 +86,38 @@ function Tasks() {
 
             setLoading(true);
 
-            const response = await axios.get(
-                'http://localhost:8000/api/tasks'
-            );
+            const token =
+                localStorage.getItem(
+                    'tm_token'
+                );
+
+            const response =
+                await axios.get(
+                    `${API_URL}/api/tasks`,
+                    {
+                        headers: token
+                            ? {
+                                Authorization:
+                                    `Bearer ${token}`,
+                            }
+                            : {},
+                    }
+                );
 
             console.log(
                 'Tasks response:',
                 response.data
             );
 
-            if (Array.isArray(response.data)) {
+            if (
+                Array.isArray(
+                    response.data
+                )
+            ) {
 
-                setTasks(response.data);
+                setTasks(
+                    response.data
+                );
 
             } else {
 
@@ -101,7 +142,6 @@ function Tasks() {
 
     };
 
-
     // =====================================================
     // LOAD TASKS WHEN PAGE OPENS
     // =====================================================
@@ -111,7 +151,6 @@ function Tasks() {
         fetchTasks();
 
     }, []);
-
 
     // =====================================================
     // ADD TASK MODAL
@@ -123,20 +162,13 @@ function Tasks() {
 
     };
 
-
     const closeAddTaskModal = () => {
 
         setIsAddTaskModalOpen(false);
 
-        /*
-         * Fetch again after closing Add Task modal.
-         * This makes newly-created tasks appear.
-         */
-
         fetchTasks();
 
     };
-
 
     // =====================================================
     // OPEN READ TASK MODAL
@@ -149,12 +181,15 @@ function Tasks() {
             taskId
         );
 
-        setSelectedTaskId(taskId);
+        setSelectedTaskId(
+            taskId
+        );
 
-        setIsReadTaskModalOpen(true);
+        setIsReadTaskModalOpen(
+            true
+        );
 
     };
-
 
     // =====================================================
     // CLOSE READ TASK MODAL
@@ -162,37 +197,43 @@ function Tasks() {
 
     const closeReadTaskModal = () => {
 
-        setIsReadTaskModalOpen(false);
+        setIsReadTaskModalOpen(
+            false
+        );
 
-        setSelectedTaskId(null);
+        setSelectedTaskId(
+            null
+        );
 
     };
-
 
     // =====================================================
     // AFTER TASK DELETE
     // =====================================================
 
-    const handleTaskDeleted = (deletedTaskId) => {
+    const handleTaskDeleted = (
+        deletedTaskId
+    ) => {
 
         console.log(
             'Deleted Task ID:',
             deletedTaskId
         );
 
-        setTasks((previousTasks) => {
+        setTasks(
+            (previousTasks) =>
+                previousTasks.filter(
+                    (task) =>
+                        task._id !==
+                        deletedTaskId
+                )
+        );
 
-            return previousTasks.filter(
-                (task) =>
-                    task._id !== deletedTaskId
-            );
-
-        });
-
-        setSelectedTaskId(null);
+        setSelectedTaskId(
+            null
+        );
 
     };
-
 
     // =====================================================
     // TASK STATISTICS
@@ -200,24 +241,28 @@ function Tasks() {
 
     const statistics = useMemo(() => {
 
-        const total = tasks.length;
+        const total =
+            tasks.length;
 
         const completed =
             tasks.filter(
                 (task) =>
-                    task.status === 'Completed'
+                    task.status ===
+                    'Completed'
             ).length;
 
         const inProgress =
             tasks.filter(
                 (task) =>
-                    task.status === 'In Progress'
+                    task.status ===
+                    'In Progress'
             ).length;
 
         const pendingTasks =
             tasks.filter(
                 (task) =>
-                    task.status === 'Pending'
+                    task.status ===
+                    'Pending'
             ).length;
 
         return {
@@ -228,12 +273,12 @@ function Tasks() {
 
             inProgress,
 
-            pending: pendingTasks,
+            pending:
+                pendingTasks,
 
         };
 
     }, [tasks]);
-
 
     // =====================================================
     // PERCENTAGES
@@ -242,38 +287,40 @@ function Tasks() {
     const completedPercentage =
         statistics.total > 0
             ? Math.round(
-                (statistics.completed /
-                    statistics.total) *
-                100
+                (
+                    statistics.completed /
+                    statistics.total
+                ) * 100
             )
             : 0;
-
 
     const progressPercentage =
         statistics.total > 0
             ? Math.round(
-                (statistics.inProgress /
-                    statistics.total) *
-                100
+                (
+                    statistics.inProgress /
+                    statistics.total
+                ) * 100
             )
             : 0;
-
 
     const pendingPercentage =
         statistics.total > 0
             ? Math.round(
-                (statistics.pending /
-                    statistics.total) *
-                100
+                (
+                    statistics.pending /
+                    statistics.total
+                ) * 100
             )
             : 0;
-
 
     // =====================================================
     // PRIORITY COLOR
     // =====================================================
 
-    const getPriorityColor = (priority) => {
+    const getPriorityColor = (
+        priority
+    ) => {
 
         switch (priority) {
 
@@ -293,7 +340,6 @@ function Tasks() {
 
     };
 
-
     // =====================================================
     // DATE FORMAT
     // =====================================================
@@ -306,7 +352,9 @@ function Tasks() {
 
         }
 
-        return new Date(date).toLocaleDateString(
+        return new Date(
+            date
+        ).toLocaleDateString(
             'en-IN',
             {
                 day: '2-digit',
@@ -317,7 +365,6 @@ function Tasks() {
 
     };
 
-
     // =====================================================
     // TASK FILTERS
     // =====================================================
@@ -325,97 +372,103 @@ function Tasks() {
     const pendingTasks =
         tasks.filter(
             (task) =>
-                task.status === 'Pending'
+                task.status ===
+                'Pending'
         );
-
 
     const inProgressTasks =
         tasks.filter(
             (task) =>
-                task.status === 'In Progress'
+                task.status ===
+                'In Progress'
         );
-
 
     const completedTasks =
         tasks.filter(
             (task) =>
-                task.status === 'Completed'
+                task.status ===
+                'Completed'
         );
-
 
     // =====================================================
     // RENDER
     // =====================================================
 
     return (
+
         <>
 
-            {/* ================================================= */}
             {/* ADD TASK MODAL */}
-            {/* ================================================= */}
 
             <AddTaskModal
-                isOpen={isAddTaskModalOpen}
-                onClose={closeAddTaskModal}
+                isOpen={
+                    isAddTaskModalOpen
+                }
+                onClose={
+                    closeAddTaskModal
+                }
             />
 
-
-            {/* ================================================= */}
             {/* READ TASK MODAL */}
-            {/* ================================================= */}
 
             <ReadTaskModal
-                isOpen={isReadTaskModalOpen}
-                onClose={closeReadTaskModal}
-                taskId={selectedTaskId}
-                onTaskDeleted={handleTaskDeleted}
+                isOpen={
+                    isReadTaskModalOpen
+                }
+                onClose={
+                    closeReadTaskModal
+                }
+                taskId={
+                    selectedTaskId
+                }
+                onTaskDeleted={
+                    handleTaskDeleted
+                }
             />
 
-
-            {/* ================================================= */}
             {/* MAIN CONTAINER */}
-            {/* ================================================= */}
 
-            <div className="app-main-container">
+            <div
+                className="app-main-container"
+            >
 
-
-                {/* ================================================= */}
                 {/* SIDE NAV */}
-                {/* ================================================= */}
 
-                <div className="app-main-left-container">
+                <div
+                    className="app-main-left-container"
+                >
 
                     <Sidenav />
 
                 </div>
 
-
-                {/* ================================================= */}
                 {/* RIGHT CONTAINER */}
-                {/* ================================================= */}
 
-                <div className="app-main-right-container">
+                <div
+                    className="app-main-right-container"
+                >
 
                     <Navbar />
 
+                    <div
+                        className="dashboard-main-container"
+                    >
 
-                    <div className="dashboard-main-container">
-
-
-                        {/* ================================================= */}
                         {/* LEFT SIDE */}
-                        {/* ================================================= */}
 
-                        <div className="dashboard-main-left-container">
+                        <div
+                            className="dashboard-main-left-container"
+                        >
 
-
-                            {/* ================================================= */}
                             {/* TASK STATISTICS */}
-                            {/* ================================================= */}
 
-                            <div className="task-status-card-container">
+                            <div
+                                className="task-status-card-container"
+                            >
 
-                                <div className="add-task-inner-div">
+                                <div
+                                    className="add-task-inner-div"
+                                >
 
                                     <FcStatistics
                                         className="task-stats"
@@ -427,26 +480,32 @@ function Tasks() {
 
                                 </div>
 
-
                                 {/* FIRST ROW */}
 
-                                <div className="stat-first-row">
-
+                                <div
+                                    className="stat-first-row"
+                                >
 
                                     {/* TOTAL */}
 
-                                    <div className="stats-container container-bg1">
+                                    <div
+                                        className="stats-container container-bg1"
+                                    >
 
                                         <img
                                             className="stats-icon"
-                                            src={totaltasks}
+                                            src={
+                                                totaltasks
+                                            }
                                             alt="Total tasks"
                                         />
 
                                         <div>
 
                                             <p className="stats-num">
-                                                {statistics.total}
+                                                {
+                                                    statistics.total
+                                                }
                                             </p>
 
                                             <p className="stats-text">
@@ -457,21 +516,26 @@ function Tasks() {
 
                                     </div>
 
-
                                     {/* COMPLETED */}
 
-                                    <div className="stats-container container-bg4">
+                                    <div
+                                        className="stats-container container-bg4"
+                                    >
 
                                         <img
                                             className="stats-icon"
-                                            src={totalcomplete}
+                                            src={
+                                                totalcomplete
+                                            }
                                             alt="Completed tasks"
                                         />
 
                                         <div>
 
                                             <p className="stats-num">
-                                                {statistics.completed}
+                                                {
+                                                    statistics.completed
+                                                }
                                             </p>
 
                                             <p className="stats-text">
@@ -484,26 +548,32 @@ function Tasks() {
 
                                 </div>
 
-
                                 {/* SECOND ROW */}
 
-                                <div className="stat-second-row">
-
+                                <div
+                                    className="stat-second-row"
+                                >
 
                                     {/* IN PROGRESS */}
 
-                                    <div className="stats-container container-bg2">
+                                    <div
+                                        className="stats-container container-bg2"
+                                    >
 
                                         <img
                                             className="stats-icon"
-                                            src={totalprogress}
+                                            src={
+                                                totalprogress
+                                            }
                                             alt="In progress tasks"
                                         />
 
                                         <div>
 
                                             <p className="stats-num">
-                                                {statistics.inProgress}
+                                                {
+                                                    statistics.inProgress
+                                                }
                                             </p>
 
                                             <p className="stats-text">
@@ -514,21 +584,26 @@ function Tasks() {
 
                                     </div>
 
-
                                     {/* PENDING */}
 
-                                    <div className="stats-container container-bg3">
+                                    <div
+                                        className="stats-container container-bg3"
+                                    >
 
                                         <img
                                             className="stats-icon"
-                                            src={totalpending}
+                                            src={
+                                                totalpending
+                                            }
                                             alt="Pending tasks"
                                         />
 
                                         <div>
 
                                             <p className="stats-num">
-                                                {statistics.pending}
+                                                {
+                                                    statistics.pending
+                                                }
                                             </p>
 
                                             <p className="stats-text">
@@ -543,22 +618,27 @@ function Tasks() {
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* AI TASK INSIGHTS */}
-                            {/* ================================================= */}
 
-                            <div className="add-task-main-container">
+                            <div
+                                className="add-task-main-container"
+                            >
 
-                                <div className="add-task-main-div">
+                                <div
+                                    className="add-task-main-div"
+                                >
 
-                                    <div className="add-task-inner-div">
+                                    <div
+                                        className="add-task-inner-div"
+                                    >
 
                                         <FiZap
                                             className="task-stats"
                                             style={{
-                                                color: '#7c3aed',
-                                                fontSize: '24px',
+                                                color:
+                                                    '#7c3aed',
+                                                fontSize:
+                                                    '24px',
                                             }}
                                         />
 
@@ -570,21 +650,22 @@ function Tasks() {
 
                                 </div>
 
-
-                                <div className="task-card-container">
+                                <div
+                                    className="task-card-container"
+                                >
 
                                     <p className="task-title">
-
                                         ✨ Productivity Recommendation
-
                                     </p>
 
-
-                                    <div className="task-desc-container">
+                                    <div
+                                        className="task-desc-container"
+                                    >
 
                                         <p className="task-desc">
 
-                                            {statistics.pending > 0
+                                            {statistics.pending >
+                                            0
 
                                                 ? `You currently have ${statistics.pending} pending task${statistics.pending > 1 ? 's' : ''}. AI recommends completing high-priority tasks first.`
 
@@ -594,13 +675,16 @@ function Tasks() {
 
                                     </div>
 
-
                                     <div
                                         style={{
-                                            display: 'flex',
-                                            gap: '10px',
-                                            flexWrap: 'wrap',
-                                            marginTop: '12px',
+                                            display:
+                                                'flex',
+                                            gap:
+                                                '10px',
+                                            flexWrap:
+                                                'wrap',
+                                            marginTop:
+                                                '12px',
                                         }}
                                     >
 
@@ -612,13 +696,15 @@ function Tasks() {
                                             AI Recommendation
                                         </Tag>
 
-
                                         <Tag
                                             size="lg"
                                             colorScheme="orange"
                                             borderRadius="full"
                                         >
-                                            {statistics.pending} Pending
+                                            {
+                                                statistics.pending
+                                            }{' '}
+                                            Pending
                                         </Tag>
 
                                     </div>
@@ -627,22 +713,24 @@ function Tasks() {
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* TODO TASKS */}
-                            {/* ================================================= */}
 
-                            <div className="add-task-main-container">
+                            <div
+                                className="add-task-main-container"
+                            >
 
+                                <div
+                                    className="add-task-main-div"
+                                >
 
-                                {/* HEADER */}
-
-                                <div className="add-task-main-div">
-
-                                    <div className="add-task-inner-div">
+                                    <div
+                                        className="add-task-inner-div"
+                                    >
 
                                         <img
-                                            src={pending}
+                                            src={
+                                                pending
+                                            }
                                             alt="Pending tasks"
                                         />
 
@@ -651,7 +739,6 @@ function Tasks() {
                                         </p>
 
                                     </div>
-
 
                                     <button
                                         className="table-btn-task"
@@ -668,15 +755,16 @@ function Tasks() {
 
                                 </div>
 
-
                                 {/* LOADING */}
 
                                 {loading ? (
 
                                     <div
                                         style={{
-                                            padding: '40px',
-                                            textAlign: 'center',
+                                            padding:
+                                                '40px',
+                                            textAlign:
+                                                'center',
                                         }}
                                     >
 
@@ -687,13 +775,17 @@ function Tasks() {
 
                                     </div>
 
-                                ) : pendingTasks.length === 0 ? (
+                                ) : pendingTasks.length ===
+                                  0 ? (
 
                                     <div
                                         style={{
-                                            padding: '30px',
-                                            textAlign: 'center',
-                                            color: '#777',
+                                            padding:
+                                                '30px',
+                                            textAlign:
+                                                'center',
+                                            color:
+                                                '#777',
                                         }}
                                     >
 
@@ -708,29 +800,32 @@ function Tasks() {
 
                                             <div
                                                 className="task-card-container"
-                                                key={task._id}
+                                                key={
+                                                    task._id
+                                                }
                                             >
 
                                                 <p className="task-title">
-
-                                                    {task.title}
-
+                                                    {
+                                                        task.title
+                                                    }
                                                 </p>
 
-
-                                                <div className="task-desc-container">
+                                                <div
+                                                    className="task-desc-container"
+                                                >
 
                                                     <p className="task-desc">
-
-                                                        {task.description}
-
+                                                        {
+                                                            task.description
+                                                        }
                                                     </p>
 
                                                 </div>
 
-
-                                                <div className="task-card-footer-container">
-
+                                                <div
+                                                    className="task-card-footer-container"
+                                                >
 
                                                     <Tag
                                                         size="lg"
@@ -741,11 +836,10 @@ function Tasks() {
                                                         }
                                                         borderRadius="full"
                                                     >
-
-                                                        {task.priority}
-
+                                                        {
+                                                            task.priority
+                                                        }
                                                     </Tag>
-
 
                                                     <div
                                                         className="task-read"
@@ -755,7 +849,8 @@ function Tasks() {
                                                             )
                                                         }
                                                         style={{
-                                                            cursor: 'pointer',
+                                                            cursor:
+                                                                'pointer',
                                                         }}
                                                     >
 
@@ -767,14 +862,15 @@ function Tasks() {
 
                                                 </div>
 
-
                                                 <p className="created">
 
                                                     Created on:{' '}
 
-                                                    {formatDate(
-                                                        task.createdAt
-                                                    )}
+                                                    {
+                                                        formatDate(
+                                                            task.createdAt
+                                                        )
+                                                    }
 
                                                 </p>
 
@@ -789,25 +885,26 @@ function Tasks() {
 
                         </div>
 
-
-                        {/* ================================================= */}
                         {/* RIGHT SIDE */}
-                        {/* ================================================= */}
 
-                        <div className="dashboard-main-right-container">
+                        <div
+                            className="dashboard-main-right-container"
+                        >
 
-
-                            {/* ================================================= */}
                             {/* TASK STATUS */}
-                            {/* ================================================= */}
 
-                            <div className="task-status-card-container">
+                            <div
+                                className="task-status-card-container"
+                            >
 
-
-                                <div className="add-task-inner-div">
+                                <div
+                                    className="add-task-inner-div"
+                                >
 
                                     <img
-                                        src={complete}
+                                        src={
+                                            complete
+                                        }
                                         alt="Task status"
                                     />
 
@@ -817,9 +914,9 @@ function Tasks() {
 
                                 </div>
 
-
-                                <div className="task-status-progress-main-container">
-
+                                <div
+                                    className="task-status-progress-main-container"
+                                >
 
                                     {/* COMPLETED */}
 
@@ -834,20 +931,18 @@ function Tasks() {
                                         >
 
                                             <CircularProgressLabel>
-
-                                                {completedPercentage}%
-
+                                                {
+                                                    completedPercentage
+                                                }%
                                             </CircularProgressLabel>
 
                                         </CircularProgress>
-
 
                                         <p className="completed">
                                             Completed
                                         </p>
 
                                     </div>
-
 
                                     {/* IN PROGRESS */}
 
@@ -862,20 +957,18 @@ function Tasks() {
                                         >
 
                                             <CircularProgressLabel>
-
-                                                {progressPercentage}%
-
+                                                {
+                                                    progressPercentage
+                                                }%
                                             </CircularProgressLabel>
 
                                         </CircularProgress>
-
 
                                         <p className="progress">
                                             In Progress
                                         </p>
 
                                     </div>
-
 
                                     {/* PENDING */}
 
@@ -890,13 +983,12 @@ function Tasks() {
                                         >
 
                                             <CircularProgressLabel>
-
-                                                {pendingPercentage}%
-
+                                                {
+                                                    pendingPercentage
+                                                }%
                                             </CircularProgressLabel>
 
                                         </CircularProgress>
-
 
                                         <p className="pending">
                                             Pending
@@ -908,20 +1000,24 @@ function Tasks() {
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* IN PROGRESS TASKS */}
-                            {/* ================================================= */}
 
-                            <div className="add-task-main-container">
+                            <div
+                                className="add-task-main-container"
+                            >
 
+                                <div
+                                    className="add-task-main-div"
+                                >
 
-                                <div className="add-task-main-div">
-
-                                    <div className="add-task-inner-div">
+                                    <div
+                                        className="add-task-inner-div"
+                                    >
 
                                         <img
-                                            src={book}
+                                            src={
+                                                book
+                                            }
                                             alt="In progress tasks"
                                         />
 
@@ -933,14 +1029,17 @@ function Tasks() {
 
                                 </div>
 
-
-                                {inProgressTasks.length === 0 ? (
+                                {inProgressTasks.length ===
+                                0 ? (
 
                                     <div
                                         style={{
-                                            padding: '30px',
-                                            textAlign: 'center',
-                                            color: '#777',
+                                            padding:
+                                                '30px',
+                                            textAlign:
+                                                'center',
+                                            color:
+                                                '#777',
                                         }}
                                     >
 
@@ -955,40 +1054,40 @@ function Tasks() {
 
                                             <div
                                                 className="task-card-container"
-                                                key={task._id}
+                                                key={
+                                                    task._id
+                                                }
                                             >
 
                                                 <p className="task-title">
-
-                                                    {task.title}
-
+                                                    {
+                                                        task.title
+                                                    }
                                                 </p>
 
-
-                                                <div className="task-desc-container">
+                                                <div
+                                                    className="task-desc-container"
+                                                >
 
                                                     <p className="task-desc">
-
-                                                        {task.description}
-
+                                                        {
+                                                            task.description
+                                                        }
                                                     </p>
 
                                                 </div>
 
-
-                                                <div className="task-card-footer-container">
-
+                                                <div
+                                                    className="task-card-footer-container"
+                                                >
 
                                                     <Tag
                                                         size="lg"
                                                         colorScheme="blue"
                                                         borderRadius="full"
                                                     >
-
                                                         In Progress
-
                                                     </Tag>
-
 
                                                     <div
                                                         className="task-read"
@@ -998,7 +1097,8 @@ function Tasks() {
                                                             )
                                                         }
                                                         style={{
-                                                            cursor: 'pointer',
+                                                            cursor:
+                                                                'pointer',
                                                         }}
                                                     >
 
@@ -1008,18 +1108,19 @@ function Tasks() {
 
                                                     </div>
 
-
                                                     <CircularProgress
                                                         value={
-                                                            task.progress || 0
+                                                            task.progress ||
+                                                            0
                                                         }
                                                         color="#0225FF"
                                                     >
 
                                                         <CircularProgressLabel>
-
-                                                            {task.progress || 0}%
-
+                                                            {
+                                                                task.progress ||
+                                                                0
+                                                            }%
                                                         </CircularProgressLabel>
 
                                                     </CircularProgress>
@@ -1035,20 +1136,24 @@ function Tasks() {
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* COMPLETED TASKS */}
-                            {/* ================================================= */}
 
-                            <div className="add-task-main-container">
+                            <div
+                                className="add-task-main-container"
+                            >
 
+                                <div
+                                    className="add-task-main-div"
+                                >
 
-                                <div className="add-task-main-div">
-
-                                    <div className="add-task-inner-div">
+                                    <div
+                                        className="add-task-inner-div"
+                                    >
 
                                         <img
-                                            src={complete}
+                                            src={
+                                                complete
+                                            }
                                             alt="Completed tasks"
                                         />
 
@@ -1060,14 +1165,17 @@ function Tasks() {
 
                                 </div>
 
-
-                                {completedTasks.length === 0 ? (
+                                {completedTasks.length ===
+                                0 ? (
 
                                     <div
                                         style={{
-                                            padding: '30px',
-                                            textAlign: 'center',
-                                            color: '#777',
+                                            padding:
+                                                '30px',
+                                            textAlign:
+                                                'center',
+                                            color:
+                                                '#777',
                                         }}
                                     >
 
@@ -1082,40 +1190,40 @@ function Tasks() {
 
                                             <div
                                                 className="task-card-container"
-                                                key={task._id}
+                                                key={
+                                                    task._id
+                                                }
                                             >
 
                                                 <p className="task-title">
-
-                                                    {task.title}
-
+                                                    {
+                                                        task.title
+                                                    }
                                                 </p>
 
-
-                                                <div className="task-desc-container">
+                                                <div
+                                                    className="task-desc-container"
+                                                >
 
                                                     <p className="task-desc">
-
-                                                        {task.description}
-
+                                                        {
+                                                            task.description
+                                                        }
                                                     </p>
 
                                                 </div>
 
-
-                                                <div className="task-card-footer-container">
-
+                                                <div
+                                                    className="task-card-footer-container"
+                                                >
 
                                                     <Tag
                                                         size="lg"
                                                         colorScheme="green"
                                                         borderRadius="full"
                                                     >
-
                                                         Completed
-
                                                     </Tag>
-
 
                                                     <div
                                                         className="task-read"
@@ -1125,7 +1233,8 @@ function Tasks() {
                                                             )
                                                         }
                                                         style={{
-                                                            cursor: 'pointer',
+                                                            cursor:
+                                                                'pointer',
                                                         }}
                                                     >
 
@@ -1137,14 +1246,15 @@ function Tasks() {
 
                                                 </div>
 
-
                                                 <p className="created">
 
                                                     Created on:{' '}
 
-                                                    {formatDate(
-                                                        task.createdAt
-                                                    )}
+                                                    {
+                                                        formatDate(
+                                                            task.createdAt
+                                                        )
+                                                    }
 
                                                 </p>
 
@@ -1157,21 +1267,23 @@ function Tasks() {
 
                             </div>
 
-
-                            {/* ================================================= */}
                             {/* QUICK INSIGHTS */}
-                            {/* ================================================= */}
 
-                            <div className="task-status-card-container">
+                            <div
+                                className="task-status-card-container"
+                            >
 
-
-                                <div className="add-task-inner-div">
+                                <div
+                                    className="add-task-inner-div"
+                                >
 
                                     <FiTrendingUp
                                         className="task-stats"
                                         style={{
-                                            color: '#05A301',
-                                            fontSize: '24px',
+                                            color:
+                                                '#05A301',
+                                            fontSize:
+                                                '24px',
                                         }}
                                     />
 
@@ -1181,69 +1293,85 @@ function Tasks() {
 
                                 </div>
 
-
                                 <div
                                     style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '15px',
-                                        marginTop: '20px',
+                                        display:
+                                            'flex',
+                                        flexDirection:
+                                            'column',
+                                        gap:
+                                            '15px',
+                                        marginTop:
+                                            '20px',
                                     }}
                                 >
 
                                     <div
                                         style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '12px',
+                                            display:
+                                                'flex',
+                                            alignItems:
+                                                'center',
+                                            gap:
+                                                '12px',
                                         }}
                                     >
 
                                         <FiClock
                                             style={{
-                                                fontSize: '22px',
-                                                color: '#0225FF',
+                                                fontSize:
+                                                    '22px',
+                                                color:
+                                                    '#0225FF',
                                             }}
                                         />
 
                                         <p>
 
                                             <strong>
-                                                {statistics.inProgress}
+                                                {
+                                                    statistics.inProgress
+                                                }
                                             </strong>{' '}
 
                                             task
-                                            {statistics.inProgress !== 1
-                                                ? 's'
-                                                : ''}{' '}
+                                            {
+                                                statistics.inProgress !==
+                                                1
+                                                    ? 's'
+                                                    : ''
+                                            }{' '}
 
-                                            are currently in progress.
+                                            are currently
+                                            in progress.
 
                                         </p>
 
                                     </div>
 
-
                                     <div
                                         style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '12px',
+                                            display:
+                                                'flex',
+                                            alignItems:
+                                                'center',
+                                            gap:
+                                                '12px',
                                         }}
                                     >
 
                                         <FiZap
                                             style={{
-                                                fontSize: '22px',
-                                                color: '#7c3aed',
+                                                fontSize:
+                                                    '22px',
+                                                color:
+                                                    '#7c3aed',
                                             }}
                                         />
 
                                         <p>
-
                                             AI recommends focusing on
                                             high-priority tasks first.
-
                                         </p>
 
                                     </div>
@@ -1261,7 +1389,9 @@ function Tasks() {
             </div>
 
         </>
+
     );
+
 }
 
 export default Tasks;
