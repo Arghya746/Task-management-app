@@ -1,5 +1,6 @@
 
 import React, {
+    useCallback,
     useEffect,
     useMemo,
     useState,
@@ -21,7 +22,6 @@ import './tasks.css';
 import pending from '../../assets/tasks/Pending.png';
 import complete from '../../assets/tasks/complete.png';
 import book from '../../assets/tasks/Book.png';
-
 import totaltasks from '../../assets/tasks/totaltasks.png';
 import totalprogress from '../../assets/tasks/totalprogress.png';
 import totalpending from '../../assets/tasks/totalpending.png';
@@ -41,6 +41,16 @@ import Navbar from '../../components/navbar/Navbar';
 
 import AddTaskModal from './modals/AddTask';
 import ReadTaskModal from './modals/ReadTask';
+
+
+// =====================================================
+// API URL
+// =====================================================
+
+const API_URL =
+    process.env.REACT_APP_API_URL ||
+    'http://localhost:8000';
+
 
 function Tasks() {
 
@@ -68,19 +78,12 @@ function Tasks() {
         setSelectedTaskId,
     ] = useState(null);
 
-    // =====================================================
-    // API CONFIGURATION - CREATE REACT APP
-    // =====================================================
-
-    const API_URL =
-        process.env.REACT_APP_API_URL ||
-        'http://localhost:8000';
 
     // =====================================================
     // FETCH TASKS
     // =====================================================
 
-    const fetchTasks = async () => {
+    const fetchTasks = useCallback(async () => {
 
         try {
 
@@ -90,6 +93,7 @@ function Tasks() {
                 localStorage.getItem(
                     'tm_token'
                 );
+
 
             const response =
                 await axios.get(
@@ -104,10 +108,12 @@ function Tasks() {
                     }
                 );
 
+
             console.log(
                 'Tasks response:',
                 response.data
             );
+
 
             if (
                 Array.isArray(
@@ -140,7 +146,8 @@ function Tasks() {
 
         }
 
-    };
+    }, []);
+
 
     // =====================================================
     // LOAD TASKS WHEN PAGE OPENS
@@ -150,7 +157,10 @@ function Tasks() {
 
         fetchTasks();
 
-    }, []);
+    }, [
+        fetchTasks,
+    ]);
+
 
     // =====================================================
     // ADD TASK MODAL
@@ -162,6 +172,7 @@ function Tasks() {
 
     };
 
+
     const closeAddTaskModal = () => {
 
         setIsAddTaskModalOpen(false);
@@ -170,11 +181,14 @@ function Tasks() {
 
     };
 
+
     // =====================================================
     // OPEN READ TASK MODAL
     // =====================================================
 
-    const openReadTaskModal = (taskId) => {
+    const openReadTaskModal = (
+        taskId
+    ) => {
 
         console.log(
             'Selected Task ID:',
@@ -191,6 +205,7 @@ function Tasks() {
 
     };
 
+
     // =====================================================
     // CLOSE READ TASK MODAL
     // =====================================================
@@ -201,11 +216,10 @@ function Tasks() {
             false
         );
 
-        setSelectedTaskId(
-            null
-        );
+        setSelectedTaskId(null);
 
     };
+
 
     // =====================================================
     // AFTER TASK DELETE
@@ -220,6 +234,7 @@ function Tasks() {
             deletedTaskId
         );
 
+
         setTasks(
             (previousTasks) =>
                 previousTasks.filter(
@@ -229,11 +244,11 @@ function Tasks() {
                 )
         );
 
-        setSelectedTaskId(
-            null
-        );
+
+        setSelectedTaskId(null);
 
     };
+
 
     // =====================================================
     // TASK STATISTICS
@@ -244,12 +259,14 @@ function Tasks() {
         const total =
             tasks.length;
 
+
         const completed =
             tasks.filter(
                 (task) =>
                     task.status ===
                     'Completed'
             ).length;
+
 
         const inProgress =
             tasks.filter(
@@ -258,12 +275,14 @@ function Tasks() {
                     'In Progress'
             ).length;
 
+
         const pendingTasks =
             tasks.filter(
                 (task) =>
                     task.status ===
                     'Pending'
             ).length;
+
 
         return {
 
@@ -278,7 +297,10 @@ function Tasks() {
 
         };
 
-    }, [tasks]);
+    }, [
+        tasks,
+    ]);
+
 
     // =====================================================
     // PERCENTAGES
@@ -294,6 +316,7 @@ function Tasks() {
             )
             : 0;
 
+
     const progressPercentage =
         statistics.total > 0
             ? Math.round(
@@ -304,6 +327,7 @@ function Tasks() {
             )
             : 0;
 
+
     const pendingPercentage =
         statistics.total > 0
             ? Math.round(
@@ -313,6 +337,7 @@ function Tasks() {
                 ) * 100
             )
             : 0;
+
 
     // =====================================================
     // PRIORITY COLOR
@@ -340,17 +365,21 @@ function Tasks() {
 
     };
 
+
     // =====================================================
     // DATE FORMAT
     // =====================================================
 
-    const formatDate = (date) => {
+    const formatDate = (
+        date
+    ) => {
 
         if (!date) {
 
             return 'Date unavailable';
 
         }
+
 
         return new Date(
             date
@@ -365,6 +394,7 @@ function Tasks() {
 
     };
 
+
     // =====================================================
     // TASK FILTERS
     // =====================================================
@@ -376,12 +406,14 @@ function Tasks() {
                 'Pending'
         );
 
+
     const inProgressTasks =
         tasks.filter(
             (task) =>
                 task.status ===
                 'In Progress'
         );
+
 
     const completedTasks =
         tasks.filter(
@@ -390,15 +422,17 @@ function Tasks() {
                 'Completed'
         );
 
+
     // =====================================================
     // RENDER
     // =====================================================
 
     return (
-
         <>
 
+            {/* ================================================= */}
             {/* ADD TASK MODAL */}
+            {/* ================================================= */}
 
             <AddTaskModal
                 isOpen={
@@ -409,7 +443,10 @@ function Tasks() {
                 }
             />
 
+
+            {/* ================================================= */}
             {/* READ TASK MODAL */}
+            {/* ================================================= */}
 
             <ReadTaskModal
                 isOpen={
@@ -426,49 +463,51 @@ function Tasks() {
                 }
             />
 
+
+            {/* ================================================= */}
             {/* MAIN CONTAINER */}
+            {/* ================================================= */}
 
-            <div
-                className="app-main-container"
-            >
+            <div className="app-main-container">
 
+
+                {/* ================================================= */}
                 {/* SIDE NAV */}
+                {/* ================================================= */}
 
-                <div
-                    className="app-main-left-container"
-                >
+                <div className="app-main-left-container">
 
                     <Sidenav />
 
                 </div>
 
-                {/* RIGHT CONTAINER */}
 
-                <div
-                    className="app-main-right-container"
-                >
+                {/* ================================================= */}
+                {/* RIGHT CONTAINER */}
+                {/* ================================================= */}
+
+                <div className="app-main-right-container">
 
                     <Navbar />
 
-                    <div
-                        className="dashboard-main-container"
-                    >
 
+                    <div className="dashboard-main-container">
+
+
+                        {/* ================================================= */}
                         {/* LEFT SIDE */}
+                        {/* ================================================= */}
 
-                        <div
-                            className="dashboard-main-left-container"
-                        >
+                        <div className="dashboard-main-left-container">
 
+
+                            {/* ================================================= */}
                             {/* TASK STATISTICS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="task-status-card-container"
-                            >
+                            <div className="task-status-card-container">
 
-                                <div
-                                    className="add-task-inner-div"
-                                >
+                                <div className="add-task-inner-div">
 
                                     <FcStatistics
                                         className="task-stats"
@@ -480,23 +519,19 @@ function Tasks() {
 
                                 </div>
 
+
                                 {/* FIRST ROW */}
 
-                                <div
-                                    className="stat-first-row"
-                                >
+                                <div className="stat-first-row">
+
 
                                     {/* TOTAL */}
 
-                                    <div
-                                        className="stats-container container-bg1"
-                                    >
+                                    <div className="stats-container container-bg1">
 
                                         <img
                                             className="stats-icon"
-                                            src={
-                                                totaltasks
-                                            }
+                                            src={totaltasks}
                                             alt="Total tasks"
                                         />
 
@@ -516,17 +551,14 @@ function Tasks() {
 
                                     </div>
 
+
                                     {/* COMPLETED */}
 
-                                    <div
-                                        className="stats-container container-bg4"
-                                    >
+                                    <div className="stats-container container-bg4">
 
                                         <img
                                             className="stats-icon"
-                                            src={
-                                                totalcomplete
-                                            }
+                                            src={totalcomplete}
                                             alt="Completed tasks"
                                         />
 
@@ -548,23 +580,19 @@ function Tasks() {
 
                                 </div>
 
+
                                 {/* SECOND ROW */}
 
-                                <div
-                                    className="stat-second-row"
-                                >
+                                <div className="stat-second-row">
+
 
                                     {/* IN PROGRESS */}
 
-                                    <div
-                                        className="stats-container container-bg2"
-                                    >
+                                    <div className="stats-container container-bg2">
 
                                         <img
                                             className="stats-icon"
-                                            src={
-                                                totalprogress
-                                            }
+                                            src={totalprogress}
                                             alt="In progress tasks"
                                         />
 
@@ -584,17 +612,14 @@ function Tasks() {
 
                                     </div>
 
+
                                     {/* PENDING */}
 
-                                    <div
-                                        className="stats-container container-bg3"
-                                    >
+                                    <div className="stats-container container-bg3">
 
                                         <img
                                             className="stats-icon"
-                                            src={
-                                                totalpending
-                                            }
+                                            src={totalpending}
                                             alt="Pending tasks"
                                         />
 
@@ -618,19 +643,16 @@ function Tasks() {
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* AI TASK INSIGHTS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="add-task-main-container"
-                            >
+                            <div className="add-task-main-container">
 
-                                <div
-                                    className="add-task-main-div"
-                                >
+                                <div className="add-task-main-div">
 
-                                    <div
-                                        className="add-task-inner-div"
-                                    >
+                                    <div className="add-task-inner-div">
 
                                         <FiZap
                                             className="task-stats"
@@ -650,30 +672,31 @@ function Tasks() {
 
                                 </div>
 
-                                <div
-                                    className="task-card-container"
-                                >
+
+                                <div className="task-card-container">
 
                                     <p className="task-title">
                                         ✨ Productivity Recommendation
                                     </p>
 
-                                    <div
-                                        className="task-desc-container"
-                                    >
+
+                                    <div className="task-desc-container">
 
                                         <p className="task-desc">
 
-                                            {statistics.pending >
-                                            0
+                                            {
+                                                statistics.pending >
+                                                0
 
-                                                ? `You currently have ${statistics.pending} pending task${statistics.pending > 1 ? 's' : ''}. AI recommends completing high-priority tasks first.`
+                                                    ? `You currently have ${statistics.pending} pending task${statistics.pending > 1 ? 's' : ''}. AI recommends completing high-priority tasks first.`
 
-                                                : 'Great! You currently have no pending tasks.'}
+                                                    : 'Great! You currently have no pending tasks.'
+                                            }
 
                                         </p>
 
                                     </div>
+
 
                                     <div
                                         style={{
@@ -696,6 +719,7 @@ function Tasks() {
                                             AI Recommendation
                                         </Tag>
 
+
                                         <Tag
                                             size="lg"
                                             colorScheme="orange"
@@ -703,8 +727,7 @@ function Tasks() {
                                         >
                                             {
                                                 statistics.pending
-                                            }{' '}
-                                            Pending
+                                            } Pending
                                         </Tag>
 
                                     </div>
@@ -713,24 +736,22 @@ function Tasks() {
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* TODO TASKS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="add-task-main-container"
-                            >
+                            <div className="add-task-main-container">
 
-                                <div
-                                    className="add-task-main-div"
-                                >
 
-                                    <div
-                                        className="add-task-inner-div"
-                                    >
+                                {/* HEADER */}
+
+                                <div className="add-task-main-div">
+
+                                    <div className="add-task-inner-div">
 
                                         <img
-                                            src={
-                                                pending
-                                            }
+                                            src={pending}
                                             alt="Pending tasks"
                                         />
 
@@ -739,6 +760,7 @@ function Tasks() {
                                         </p>
 
                                     </div>
+
 
                                     <button
                                         className="table-btn-task"
@@ -754,6 +776,7 @@ function Tasks() {
                                     </button>
 
                                 </div>
+
 
                                 {/* LOADING */}
 
@@ -775,8 +798,7 @@ function Tasks() {
 
                                     </div>
 
-                                ) : pendingTasks.length ===
-                                  0 ? (
+                                ) : pendingTasks.length === 0 ? (
 
                                     <div
                                         style={{
@@ -811,9 +833,8 @@ function Tasks() {
                                                     }
                                                 </p>
 
-                                                <div
-                                                    className="task-desc-container"
-                                                >
+
+                                                <div className="task-desc-container">
 
                                                     <p className="task-desc">
                                                         {
@@ -823,9 +844,9 @@ function Tasks() {
 
                                                 </div>
 
-                                                <div
-                                                    className="task-card-footer-container"
-                                                >
+
+                                                <div className="task-card-footer-container">
+
 
                                                     <Tag
                                                         size="lg"
@@ -836,10 +857,13 @@ function Tasks() {
                                                         }
                                                         borderRadius="full"
                                                     >
+
                                                         {
                                                             task.priority
                                                         }
+
                                                     </Tag>
+
 
                                                     <div
                                                         className="task-read"
@@ -861,6 +885,7 @@ function Tasks() {
                                                     </div>
 
                                                 </div>
+
 
                                                 <p className="created">
 
@@ -885,26 +910,25 @@ function Tasks() {
 
                         </div>
 
+
+                        {/* ================================================= */}
                         {/* RIGHT SIDE */}
+                        {/* ================================================= */}
 
-                        <div
-                            className="dashboard-main-right-container"
-                        >
+                        <div className="dashboard-main-right-container">
 
+
+                            {/* ================================================= */}
                             {/* TASK STATUS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="task-status-card-container"
-                            >
+                            <div className="task-status-card-container">
 
-                                <div
-                                    className="add-task-inner-div"
-                                >
+
+                                <div className="add-task-inner-div">
 
                                     <img
-                                        src={
-                                            complete
-                                        }
+                                        src={complete}
                                         alt="Task status"
                                     />
 
@@ -914,9 +938,9 @@ function Tasks() {
 
                                 </div>
 
-                                <div
-                                    className="task-status-progress-main-container"
-                                >
+
+                                <div className="task-status-progress-main-container">
+
 
                                     {/* COMPLETED */}
 
@@ -931,18 +955,22 @@ function Tasks() {
                                         >
 
                                             <CircularProgressLabel>
+
                                                 {
                                                     completedPercentage
                                                 }%
+
                                             </CircularProgressLabel>
 
                                         </CircularProgress>
+
 
                                         <p className="completed">
                                             Completed
                                         </p>
 
                                     </div>
+
 
                                     {/* IN PROGRESS */}
 
@@ -957,18 +985,22 @@ function Tasks() {
                                         >
 
                                             <CircularProgressLabel>
+
                                                 {
                                                     progressPercentage
                                                 }%
+
                                             </CircularProgressLabel>
 
                                         </CircularProgress>
+
 
                                         <p className="progress">
                                             In Progress
                                         </p>
 
                                     </div>
+
 
                                     {/* PENDING */}
 
@@ -983,12 +1015,15 @@ function Tasks() {
                                         >
 
                                             <CircularProgressLabel>
+
                                                 {
                                                     pendingPercentage
                                                 }%
+
                                             </CircularProgressLabel>
 
                                         </CircularProgress>
+
 
                                         <p className="pending">
                                             Pending
@@ -1000,24 +1035,20 @@ function Tasks() {
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* IN PROGRESS TASKS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="add-task-main-container"
-                            >
+                            <div className="add-task-main-container">
 
-                                <div
-                                    className="add-task-main-div"
-                                >
 
-                                    <div
-                                        className="add-task-inner-div"
-                                    >
+                                <div className="add-task-main-div">
+
+                                    <div className="add-task-inner-div">
 
                                         <img
-                                            src={
-                                                book
-                                            }
+                                            src={book}
                                             alt="In progress tasks"
                                         />
 
@@ -1029,131 +1060,138 @@ function Tasks() {
 
                                 </div>
 
-                                {inProgressTasks.length ===
-                                0 ? (
 
-                                    <div
-                                        style={{
-                                            padding:
-                                                '30px',
-                                            textAlign:
-                                                'center',
-                                            color:
-                                                '#777',
-                                        }}
-                                    >
+                                {
+                                    inProgressTasks.length === 0 ? (
 
-                                        No tasks in progress.
+                                        <div
+                                            style={{
+                                                padding:
+                                                    '30px',
+                                                textAlign:
+                                                    'center',
+                                                color:
+                                                    '#777',
+                                            }}
+                                        >
 
-                                    </div>
+                                            No tasks in progress.
 
-                                ) : (
+                                        </div>
 
-                                    inProgressTasks.map(
-                                        (task) => (
+                                    ) : (
 
-                                            <div
-                                                className="task-card-container"
-                                                key={
-                                                    task._id
-                                                }
-                                            >
-
-                                                <p className="task-title">
-                                                    {
-                                                        task.title
-                                                    }
-                                                </p>
+                                        inProgressTasks.map(
+                                            (task) => (
 
                                                 <div
-                                                    className="task-desc-container"
+                                                    className="task-card-container"
+                                                    key={
+                                                        task._id
+                                                    }
                                                 >
 
-                                                    <p className="task-desc">
+                                                    <p className="task-title">
+
                                                         {
-                                                            task.description
+                                                            task.title
                                                         }
+
                                                     </p>
 
-                                                </div>
 
-                                                <div
-                                                    className="task-card-footer-container"
-                                                >
+                                                    <div className="task-desc-container">
 
-                                                    <Tag
-                                                        size="lg"
-                                                        colorScheme="blue"
-                                                        borderRadius="full"
-                                                    >
-                                                        In Progress
-                                                    </Tag>
+                                                        <p className="task-desc">
 
-                                                    <div
-                                                        className="task-read"
-                                                        onClick={() =>
-                                                            openReadTaskModal(
-                                                                task._id
-                                                            )
-                                                        }
-                                                        style={{
-                                                            cursor:
-                                                                'pointer',
-                                                        }}
-                                                    >
+                                                            {
+                                                                task.description
+                                                            }
 
-                                                        <IoReaderOutline
-                                                            className="read-icon"
-                                                        />
+                                                        </p>
 
                                                     </div>
 
-                                                    <CircularProgress
-                                                        value={
-                                                            task.progress ||
-                                                            0
-                                                        }
-                                                        color="#0225FF"
-                                                    >
 
-                                                        <CircularProgressLabel>
-                                                            {
+                                                    <div className="task-card-footer-container">
+
+
+                                                        <Tag
+                                                            size="lg"
+                                                            colorScheme="blue"
+                                                            borderRadius="full"
+                                                        >
+
+                                                            In Progress
+
+                                                        </Tag>
+
+
+                                                        <div
+                                                            className="task-read"
+                                                            onClick={() =>
+                                                                openReadTaskModal(
+                                                                    task._id
+                                                                )
+                                                            }
+                                                            style={{
+                                                                cursor:
+                                                                    'pointer',
+                                                            }}
+                                                        >
+
+                                                            <IoReaderOutline
+                                                                className="read-icon"
+                                                            />
+
+                                                        </div>
+
+
+                                                        <CircularProgress
+                                                            value={
                                                                 task.progress ||
                                                                 0
-                                                            }%
-                                                        </CircularProgressLabel>
+                                                            }
+                                                            color="#0225FF"
+                                                        >
 
-                                                    </CircularProgress>
+                                                            <CircularProgressLabel>
+
+                                                                {
+                                                                    task.progress ||
+                                                                    0
+                                                                }%
+
+                                                            </CircularProgressLabel>
+
+                                                        </CircularProgress>
+
+                                                    </div>
 
                                                 </div>
 
-                                            </div>
-
+                                            )
                                         )
-                                    )
 
-                                )}
+                                    )
+                                }
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* COMPLETED TASKS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="add-task-main-container"
-                            >
+                            <div className="add-task-main-container">
 
-                                <div
-                                    className="add-task-main-div"
-                                >
 
-                                    <div
-                                        className="add-task-inner-div"
-                                    >
+                                <div className="add-task-main-div">
+
+                                    <div className="add-task-inner-div">
 
                                         <img
-                                            src={
-                                                complete
-                                            }
+                                            src={complete}
                                             alt="Completed tasks"
                                         />
 
@@ -1165,117 +1203,126 @@ function Tasks() {
 
                                 </div>
 
-                                {completedTasks.length ===
-                                0 ? (
 
-                                    <div
-                                        style={{
-                                            padding:
-                                                '30px',
-                                            textAlign:
-                                                'center',
-                                            color:
-                                                '#777',
-                                        }}
-                                    >
+                                {
+                                    completedTasks.length === 0 ? (
 
-                                        No completed tasks.
+                                        <div
+                                            style={{
+                                                padding:
+                                                    '30px',
+                                                textAlign:
+                                                    'center',
+                                                color:
+                                                    '#777',
+                                            }}
+                                        >
 
-                                    </div>
+                                            No completed tasks.
 
-                                ) : (
+                                        </div>
 
-                                    completedTasks.map(
-                                        (task) => (
+                                    ) : (
 
-                                            <div
-                                                className="task-card-container"
-                                                key={
-                                                    task._id
-                                                }
-                                            >
-
-                                                <p className="task-title">
-                                                    {
-                                                        task.title
-                                                    }
-                                                </p>
+                                        completedTasks.map(
+                                            (task) => (
 
                                                 <div
-                                                    className="task-desc-container"
+                                                    className="task-card-container"
+                                                    key={
+                                                        task._id
+                                                    }
                                                 >
 
-                                                    <p className="task-desc">
+                                                    <p className="task-title">
+
                                                         {
-                                                            task.description
+                                                            task.title
                                                         }
+
+                                                    </p>
+
+
+                                                    <div className="task-desc-container">
+
+                                                        <p className="task-desc">
+
+                                                            {
+                                                                task.description
+                                                            }
+
+                                                        </p>
+
+                                                    </div>
+
+
+                                                    <div className="task-card-footer-container">
+
+
+                                                        <Tag
+                                                            size="lg"
+                                                            colorScheme="green"
+                                                            borderRadius="full"
+                                                        >
+
+                                                            Completed
+
+                                                        </Tag>
+
+
+                                                        <div
+                                                            className="task-read"
+                                                            onClick={() =>
+                                                                openReadTaskModal(
+                                                                    task._id
+                                                                )
+                                                            }
+                                                            style={{
+                                                                cursor:
+                                                                    'pointer',
+                                                            }}
+                                                        >
+
+                                                            <IoReaderOutline
+                                                                className="read-icon"
+                                                            />
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                    <p className="created">
+
+                                                        Created on:{' '}
+
+                                                        {
+                                                            formatDate(
+                                                                task.createdAt
+                                                            )
+                                                        }
+
                                                     </p>
 
                                                 </div>
 
-                                                <div
-                                                    className="task-card-footer-container"
-                                                >
-
-                                                    <Tag
-                                                        size="lg"
-                                                        colorScheme="green"
-                                                        borderRadius="full"
-                                                    >
-                                                        Completed
-                                                    </Tag>
-
-                                                    <div
-                                                        className="task-read"
-                                                        onClick={() =>
-                                                            openReadTaskModal(
-                                                                task._id
-                                                            )
-                                                        }
-                                                        style={{
-                                                            cursor:
-                                                                'pointer',
-                                                        }}
-                                                    >
-
-                                                        <IoReaderOutline
-                                                            className="read-icon"
-                                                        />
-
-                                                    </div>
-
-                                                </div>
-
-                                                <p className="created">
-
-                                                    Created on:{' '}
-
-                                                    {
-                                                        formatDate(
-                                                            task.createdAt
-                                                        )
-                                                    }
-
-                                                </p>
-
-                                            </div>
-
+                                            )
                                         )
-                                    )
 
-                                )}
+                                    )
+                                }
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* QUICK INSIGHTS */}
+                            {/* ================================================= */}
 
-                            <div
-                                className="task-status-card-container"
-                            >
+                            <div className="task-status-card-container">
 
-                                <div
-                                    className="add-task-inner-div"
-                                >
+
+                                <div className="add-task-inner-div">
 
                                     <FiTrendingUp
                                         className="task-stats"
@@ -1292,6 +1339,7 @@ function Tasks() {
                                     </p>
 
                                 </div>
+
 
                                 <div
                                     style={{
@@ -1349,6 +1397,7 @@ function Tasks() {
 
                                     </div>
 
+
                                     <div
                                         style={{
                                             display:
@@ -1370,8 +1419,10 @@ function Tasks() {
                                         />
 
                                         <p>
+
                                             AI recommends focusing on
                                             high-priority tasks first.
+
                                         </p>
 
                                     </div>
@@ -1389,7 +1440,6 @@ function Tasks() {
             </div>
 
         </>
-
     );
 
 }

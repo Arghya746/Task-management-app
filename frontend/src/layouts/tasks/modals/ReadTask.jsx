@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
+
 import axios from 'axios';
 
 import {
@@ -30,6 +35,7 @@ import {
     FiCalendar,
 } from 'react-icons/fi';
 
+
 function ReadTaskModal({
     isOpen,
     onClose,
@@ -51,6 +57,7 @@ function ReadTaskModal({
     const [deleteLoading, setDeleteLoading] =
         useState(false);
 
+
     // =====================================================
     // API CONFIGURATION - CREATE REACT APP
     // =====================================================
@@ -59,90 +66,98 @@ function ReadTaskModal({
         process.env.REACT_APP_API_URL ||
         'http://localhost:8000';
 
+
     // =====================================================
     // GET SINGLE TASK
     // =====================================================
 
-    const getTask = async () => {
+    const getTask = useCallback(
+        async () => {
 
-        if (!taskId) {
+            if (!taskId) {
 
-            console.log(
-                'No task ID received'
-            );
-
-            setTask(null);
-
-            return;
-
-        }
-
-        try {
-
-            setLoading(true);
-
-            console.log(
-                'Fetching task:',
-                taskId
-            );
-
-            const token =
-                localStorage.getItem(
-                    'tm_token'
+                console.log(
+                    'No task ID received'
                 );
 
-            const response =
-                await axios.get(
-                    `${API_URL}/api/task/${taskId}`,
-                    {
-                        headers: token
-                            ? {
-                                Authorization:
-                                    `Bearer ${token}`,
-                            }
-                            : {},
-                    }
+                setTask(null);
+
+                return;
+
+            }
+
+            try {
+
+                setLoading(true);
+
+                console.log(
+                    'Fetching task:',
+                    taskId
                 );
 
-            console.log(
-                'Selected task:',
-                response.data
-            );
+                const token =
+                    localStorage.getItem(
+                        'tm_token'
+                    );
 
-            setTask(
-                response.data
-            );
+                const response =
+                    await axios.get(
+                        `${API_URL}/api/task/${taskId}`,
+                        {
+                            headers: token
+                                ? {
+                                    Authorization:
+                                        `Bearer ${token}`,
+                                }
+                                : {},
+                        }
+                    );
 
-        } catch (error) {
+                console.log(
+                    'Selected task:',
+                    response.data
+                );
 
-            console.error(
-                'Get task error:',
-                error
-            );
+                setTask(
+                    response.data
+                );
 
-            setTask(null);
+            } catch (error) {
 
-            toast({
-                title:
+                console.error(
+                    'Get task error:',
+                    error
+                );
+
+                setTask(null);
+
+                const errorMessage =
                     error?.response?.data?.message ||
-                    'Failed to load task',
+                    error?.message ||
+                    'Failed to load task';
 
-                status: 'error',
+                toast({
+                    title: errorMessage,
+                    status: 'error',
+                    position: 'top',
+                    duration: 4000,
+                    isClosable: true,
+                });
 
-                position: 'top',
+            } finally {
 
-                duration: 4000,
+                setLoading(false);
 
-                isClosable: true,
-            });
+            }
 
-        } finally {
+        },
+        [
+            API_URL,
+            taskId,
+            toast,
+        ]
+    );
 
-            setLoading(false);
-
-        }
-
-    };
 
     // =====================================================
     // LOAD TASK WHEN MODAL OPENS
@@ -168,7 +183,9 @@ function ReadTaskModal({
     }, [
         isOpen,
         taskId,
+        getTask,
     ]);
+
 
     // =====================================================
     // DELETE TASK
@@ -251,10 +268,13 @@ function ReadTaskModal({
                 error
             );
 
+            const errorMessage =
+                error?.response?.data?.message ||
+                error?.message ||
+                'Failed to delete task';
+
             toast({
-                title:
-                    error?.response?.data?.message ||
-                    'Failed to delete task',
+                title: errorMessage,
 
                 status: 'error',
 
@@ -272,6 +292,7 @@ function ReadTaskModal({
         }
 
     };
+
 
     // =====================================================
     // DATE FORMATTER
@@ -297,6 +318,7 @@ function ReadTaskModal({
         );
 
     };
+
 
     // =====================================================
     // STATUS COLOR
@@ -325,6 +347,7 @@ function ReadTaskModal({
 
     };
 
+
     // =====================================================
     // PRIORITY COLOR
     // =====================================================
@@ -348,6 +371,7 @@ function ReadTaskModal({
         }
 
     };
+
 
     // =====================================================
     // EMPLOYEE NAME
@@ -386,6 +410,7 @@ function ReadTaskModal({
 
     };
 
+
     // =====================================================
     // RENDER
     // =====================================================
@@ -404,7 +429,9 @@ function ReadTaskModal({
 
             <ModalContent>
 
+                {/* ================================================= */}
                 {/* HEADER */}
+                {/* ================================================= */}
 
                 <ModalHeader>
                     Task Details
@@ -412,7 +439,10 @@ function ReadTaskModal({
 
                 <ModalCloseButton />
 
+
+                {/* ================================================= */}
                 {/* BODY */}
+                {/* ================================================= */}
 
                 <ModalBody>
 
@@ -475,7 +505,9 @@ function ReadTaskModal({
 
                         <>
 
+                            {/* ================================================= */}
                             {/* MAIN TASK CARD */}
+                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -490,6 +522,8 @@ function ReadTaskModal({
                                 }}
                             >
 
+                                {/* TITLE */}
+
                                 <p
                                     style={{
                                         fontSize: '24px',
@@ -500,6 +534,9 @@ function ReadTaskModal({
                                 >
                                     {task.title}
                                 </p>
+
+
+                                {/* DESCRIPTION */}
 
                                 <div
                                     style={{
@@ -521,6 +558,9 @@ function ReadTaskModal({
 
                                 </div>
 
+
+                                {/* PRIORITY + STATUS */}
+
                                 <div
                                     style={{
                                         display: 'flex',
@@ -541,6 +581,7 @@ function ReadTaskModal({
                                         {task.priority}
                                     </Tag>
 
+
                                     <Tag
                                         size="lg"
                                         colorScheme={
@@ -557,7 +598,10 @@ function ReadTaskModal({
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* PROGRESS */}
+                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -588,6 +632,7 @@ function ReadTaskModal({
 
                                 </CircularProgress>
 
+
                                 <div>
 
                                     <p
@@ -615,7 +660,10 @@ function ReadTaskModal({
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* EMPLOYEE + PROJECT */}
+                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -661,6 +709,7 @@ function ReadTaskModal({
 
                                     </div>
 
+
                                     <p
                                         style={{
                                             color: '#374151',
@@ -669,6 +718,7 @@ function ReadTaskModal({
                                     >
                                         {getEmployeeName()}
                                     </p>
+
 
                                     {task.assignTo?.role && (
 
@@ -685,6 +735,7 @@ function ReadTaskModal({
                                     )}
 
                                 </div>
+
 
                                 {/* PROJECT */}
 
@@ -720,6 +771,7 @@ function ReadTaskModal({
 
                                     </div>
 
+
                                     <p
                                         style={{
                                             color: '#374151',
@@ -734,7 +786,10 @@ function ReadTaskModal({
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* TASK INFORMATION */}
+                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -757,6 +812,7 @@ function ReadTaskModal({
                                     Task Information
                                 </p>
 
+
                                 <div
                                     style={{
                                         display: 'flex',
@@ -764,6 +820,8 @@ function ReadTaskModal({
                                         gap: '14px',
                                     }}
                                 >
+
+                                    {/* CREATED */}
 
                                     <div
                                         style={{
@@ -791,6 +849,9 @@ function ReadTaskModal({
 
                                     </div>
 
+
+                                    {/* START DATE */}
+
                                     <div
                                         style={{
                                             display: 'flex',
@@ -816,6 +877,9 @@ function ReadTaskModal({
                                         </p>
 
                                     </div>
+
+
+                                    {/* STATUS */}
 
                                     <div
                                         style={{
@@ -845,7 +909,10 @@ function ReadTaskModal({
 
                             </div>
 
+
+                            {/* ================================================= */}
                             {/* AI SUMMARY */}
+                            {/* ================================================= */}
 
                             <div
                                 style={{
@@ -886,6 +953,7 @@ function ReadTaskModal({
 
                                 </div>
 
+
                                 <p
                                     style={{
                                         color: '#555',
@@ -904,7 +972,10 @@ function ReadTaskModal({
 
                 </ModalBody>
 
+
+                {/* ================================================= */}
                 {/* FOOTER */}
+                {/* ================================================= */}
 
                 <ModalFooter>
 
@@ -918,6 +989,7 @@ function ReadTaskModal({
                     >
                         Close
                     </Button>
+
 
                     <Button
                         colorScheme="red"
@@ -942,6 +1014,7 @@ function ReadTaskModal({
                         ) : (
 
                             <>
+
                                 <MdDelete
                                     style={{
                                         marginRight: '6px',
@@ -950,6 +1023,7 @@ function ReadTaskModal({
                                 />
 
                                 Delete Task
+
                             </>
 
                         )}
@@ -965,5 +1039,6 @@ function ReadTaskModal({
     );
 
 }
+
 
 export default ReadTaskModal;
