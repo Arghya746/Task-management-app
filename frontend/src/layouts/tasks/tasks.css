@@ -1,3 +1,7 @@
+/* =========================================================
+   MAIN DASHBOARD
+========================================================= */
+
 .dashboard-main-container {
     width: 100%;
     display: flex;
@@ -11,31 +15,25 @@
     width: 50%;
 }
 
+.dashboard-main-right-container {
+    width: 50%;
+}
+
+
+/* =========================================================
+   TASK STATISTICS
+========================================================= */
+
 .task-stats {
     font-size: 25px;
 }
 
-.stat-first-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 1rem 0;
-}
-
+.stat-first-row,
 .stat-second-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin: 1rem 0;
-}
-
-.add-task-main-container {
-    background-color: white;
-    border-radius: 30px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    min-height: 17rem;
 }
 
 .stats-icon {
@@ -49,56 +47,111 @@
     justify-content: center;
     gap: 1rem;
     align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stats-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .stats-num {
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 24px;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 36px;
     color: white;
+    margin: 0;
 }
 
 .stats-text {
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 12px;
     font-weight: 400;
     line-height: 18px;
     color: white;
+    margin: 0;
 }
 
 .container-bg1 {
-    background: linear-gradient(90deg, rgba(131, 132, 248, 0.77) 0%, rgba(131, 132, 248, 0.42) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(131, 132, 248, 0.77) 0%,
+        rgba(131, 132, 248, 0.42) 100%
+    );
+
     height: 80px;
     width: 40%;
     border-radius: 30px;
 }
 
 .container-bg2 {
-    background: linear-gradient(90deg, rgba(150, 201, 209, 0.81) 0%, rgba(173, 220, 227, 0.58) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(150, 201, 209, 0.81) 0%,
+        rgba(173, 220, 227, 0.58) 100%
+    );
+
     height: 80px;
     width: 40%;
     border-radius: 30px;
 }
 
 .container-bg3 {
-    background: linear-gradient(90deg, rgba(251, 149, 141, 0.58) 0%, rgba(248, 176, 169, 0.43) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(251, 149, 141, 0.58) 0%,
+        rgba(248, 176, 169, 0.43) 100%
+    );
+
     height: 80px;
     width: 40%;
     border-radius: 30px;
 }
 
 .container-bg4 {
-    background: linear-gradient(90deg, rgba(135, 236, 175, 0.73) 0%, rgba(135, 236, 175, 0.41) 100%);
+    background: linear-gradient(
+        90deg,
+        rgba(135, 236, 175, 0.73) 0%,
+        rgba(135, 236, 175, 0.41) 100%
+    );
+
     height: 80px;
     width: 40%;
     border-radius: 30px;
 }
 
+
+/* =========================================================
+   COMMON CARDS
+========================================================= */
+
+.add-task-main-container,
+.task-status-card-container {
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    min-height: 17rem;
+    transition: box-shadow 0.2s ease;
+}
+
+.add-task-main-container:hover,
+.task-status-card-container:hover {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 14px;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
 .add-task-main-div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
 .add-task-inner-div {
@@ -109,17 +162,18 @@
 }
 
 .todo-text {
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     color: darkcyan;
+    margin: 0;
 }
 
 .addtask-text {
-    font-family: Inter;
+    font-family: Inter, sans-serif;
     font-size: 14px;
     font-weight: 400;
-    color: #A1A3AB;
+    color: #a1a3ab;
     cursor: pointer;
 }
 
@@ -129,151 +183,579 @@
     cursor: pointer;
 }
 
-.task-card-container {
-    min-height: 250px;
-    background-color: #F5F8FF;
-    border-radius: 30px;
-    border: 1px solid #e1e3eb;
-    margin: 1rem;
-    padding: 1rem;
-}
 
-.task-title {
-    font-family: Inter;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 19.36px;
-    color: #747474;
-}
-
-.task-desc {
-    font-family: Inter;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 17.01px;
-    overflow: hidden;
-    height: 69px;
-    color: #534949;
-}
-
-.task-desc-container {
-    height: 100px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, rgba(31, 219, 236, 0.58) 0%, rgba(248, 176, 169, 0.43) 100%);
-    padding: 1rem;
-    overflow: hidden;
-    margin: 0.5rem 0;
-}
-
-.task-card-footer-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.tag-text {
-    font-family: Inter;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.task-read {
-    height: 36px;
-    width: 36px;
-    background-color: darkcyan;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.read-icon {
-    margin: auto;
-    font-size: 20px;
-    color: white;
-}
-
-.created {
-    font-family: Inter;
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 12.1px;
-    text-align: center;
-    margin: 1rem 0 0 0;
-}
-
-
-.dashboard-main-right-container {
-    width: 50%;
-}
-
-.task-status-card-container {
-    background-color: white;
-    border-radius: 30px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    min-height: 17rem;
-}
-
-.task-status-progress-main-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 2rem 0;
-}
-
-.completed {
-    font-family: Inter;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 18.15px;
-    color: #05A301;
-    text-align: center;
-    margin: 1.5rem 0 0 0;
-}
-
-.progress {
-    font-family: Inter;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 18.15px;
-    color: #0225FF;
-    text-align: center;
-    margin: 1.5rem 0 0 0;
-}
-
-.pending {
-    font-family: Inter;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 18.15px;
-    color: #F21E1E;
-    text-align: center;
-    margin: 1.5rem 0 0 0;
-}
-
-.priority-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1rem 0;
-}
+/* =========================================================
+   ADD TASK BUTTON
+========================================================= */
 
 .table-btn-task {
     background-color: darkcyan;
     color: white;
-    padding: 0.7rem;
+    padding: 0.7rem 1rem;
     border-radius: 1rem;
-    font-family: Inter;
+    border: none;
+    font-family: Inter, sans-serif;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
+
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.table-btn-task:hover {
+    background-color: #007878;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 139, 139, 0.25);
+}
+
+.table-btn-task:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   TASK CARD
+========================================================= */
+
+.task-card-container {
+    min-height: 250px;
+
+    background-color: #f5f8ff;
+
+    border-radius: 24px;
+
+    border: 1px solid #e1e3eb;
+
+    margin: 1rem 0;
+
+    padding: 1.25rem;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.task-card-container:hover {
+    transform: translateY(-3px);
+
+    border-color: #cdd4e5;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================================================
+   TASK TITLE
+========================================================= */
+
+.task-title {
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+
+    color: #444;
+
+    margin: 0 0 0.75rem 0;
+}
+
+
+/* =========================================================
+   TASK DESCRIPTION
+========================================================= */
+
+.task-desc-container {
+    min-height: 100px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(31, 219, 236, 0.35) 0%,
+            rgba(248, 176, 169, 0.30) 100%
+        );
+
+    padding: 1rem;
+
+    overflow: hidden;
+
+    margin: 0.5rem 0;
+}
+
+.task-desc {
+    font-family: Inter, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    line-height: 21px;
+
+    color: #534949;
+
+    margin: 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TASK FOOTER
+========================================================= */
+
+.task-card-footer-container {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    margin-top: 1rem;
+}
+
+.tag-text {
+    font-family: Inter, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   READ TASK BUTTON
+========================================================= */
+
+.task-read {
+    height: 36px;
+
+    width: 36px;
+
+    background-color: darkcyan;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.task-read:hover {
+    background-color: #007878;
+
+    transform: scale(1.05);
+}
+
+.read-icon {
+    margin: auto;
+
+    font-size: 20px;
+
+    color: white;
+}
+
+
+/* =========================================================
+   CREATED DATE
+========================================================= */
+
+.created {
+    font-family: Inter, sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 400;
+
+    line-height: 12px;
+
+    text-align: center;
+
+    color: #999;
+
+    margin: 1rem 0 0 0;
+}
+
+
+/* =========================================================
+   TASK STATUS
+========================================================= */
+
+.task-status-progress-main-container {
+    display: flex;
+
+    flex-direction: row;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 1rem;
+
+    margin: 2rem 0;
+}
+
+.completed,
+.progress,
+.pending {
+    font-family: Inter, sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    line-height: 18px;
+
+    text-align: center;
+
+    margin: 1.5rem 0 0 0;
+}
+
+.completed {
+    color: #05a301;
+}
+
+.progress {
+    color: #0225ff;
+}
+
+.pending {
+    color: #f21e1e;
+}
+
+
+/* =========================================================
+   PRIORITY
+========================================================= */
+
+.priority-container {
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 0.5rem;
+
+    margin: 1rem 0;
+}
+
+.priority-container p {
+    font-family: Inter, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    margin-right: 0.25rem;
+}
+
+
+/* =========================================================
+   AI TASK SECTION
+========================================================= */
+
+.ai-task-section {
+    margin-top: 1rem;
+
+    padding: 1rem;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf7ff 0%,
+            #f5f0ff 100%
+        );
+
+    border: 1px solid #e7dcff;
+}
+
+.ai-task-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    margin-bottom: 0.75rem;
+}
+
+.ai-task-header p {
+    font-family: Inter, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #6d28d9;
+
+    margin: 0;
+}
+
+.ai-task-content {
+    font-family: Inter, sans-serif;
+
+    font-size: 13px;
+
+    line-height: 20px;
+
+    color: #555;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   AI SUMMARY
+========================================================= */
+
+.ai-summary {
+    margin-top: 1rem;
+
+    padding: 1rem;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #faf7ff,
+            #f4efff
+        );
+
+    border: 1px solid #e4d9ff;
+}
+
+.ai-summary-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    font-family: Inter, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #6d28d9;
+
+    margin-bottom: 0.6rem;
+}
+
+.ai-summary-text {
+    font-family: Inter, sans-serif;
+
+    font-size: 13px;
+
+    line-height: 20px;
+
+    color: #555;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   AI RECOMMENDATION
+========================================================= */
+
+.ai-recommendation {
+    margin-top: 1rem;
+
+    padding: 1rem;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f0fdf4,
+            #ecfdf5
+        );
+
+    border: 1px solid #bbf7d0;
+}
+
+.ai-recommendation-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    font-family: Inter, sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #15803d;
+
+    margin-bottom: 0.6rem;
+}
+
+.ai-recommendation-text {
+    font-family: Inter, sans-serif;
+
+    font-size: 13px;
+
+    line-height: 20px;
+
+    color: #555;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+========================================================= */
+
+@media screen and (max-width: 1100px) {
+
+    .dashboard-main-container {
+        flex-direction: column;
+    }
+
+    .dashboard-main-left-container,
+    .dashboard-main-right-container {
+        width: 100%;
+    }
+
+    .container-bg1,
+    .container-bg2,
+    .container-bg3,
+    .container-bg4 {
+        width: 45%;
+    }
+}
+
+
+@media screen and (max-width: 700px) {
+
+    .dashboard-main-container {
+        gap: 0.5rem;
+    }
+
+    .add-task-main-container,
+    .task-status-card-container {
+        padding: 1rem;
+
+        border-radius: 20px;
+    }
+
+    .stat-first-row,
+    .stat-second-row {
+        gap: 0.75rem;
+    }
+
+    .container-bg1,
+    .container-bg2,
+    .container-bg3,
+    .container-bg4 {
+        width: 50%;
+    }
+
+    .stats-num {
+        font-size: 20px;
+    }
+
+    .stats-text {
+        font-size: 11px;
+    }
+
+    .task-card-container {
+        border-radius: 20px;
+
+        padding: 1rem;
+    }
+
+    .task-card-footer-container {
+        flex-wrap: wrap;
+    }
+
+    .task-status-progress-main-container {
+        justify-content: space-around;
+
+        gap: 0.5rem;
+    }
+
+    .table-btn-task {
+        padding: 0.6rem 0.8rem;
+
+        font-size: 13px;
+    }
+}
+
+
+@media screen and (max-width: 480px) {
+
+    .stat-first-row,
+    .stat-second-row {
+        flex-direction: column;
+    }
+
+    .container-bg1,
+    .container-bg2,
+    .container-bg3,
+    .container-bg4 {
+        width: 100%;
+    }
+
+    .add-task-main-div {
+        gap: 0.75rem;
+
+        align-items: flex-start;
+    }
+
+    .task-status-progress-main-container {
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 1.5rem;
+    }
+
+    .task-title {
+        font-size: 15px;
+    }
+
+    .task-desc {
+        font-size: 13px;
+    }
 }
