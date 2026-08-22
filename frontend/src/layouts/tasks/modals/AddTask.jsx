@@ -2,6 +2,7 @@
 import React, {
     useCallback,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 
@@ -24,7 +25,6 @@ import {
 
 import axios from 'axios';
 
-
 // =====================================================
 // API URL
 // =====================================================
@@ -33,14 +33,28 @@ const API_URL =
     process.env.REACT_APP_API_URL ||
     'http://localhost:8000';
 
+// =====================================================
+// INITIAL FORM DATA
+// =====================================================
+
+const INITIAL_FORM_DATA = {
+    title: '',
+    description: '',
+    assignTo: '',
+    project: '',
+    startDate: '',
+    priority: 'Most Important',
+};
+
+// =====================================================
+// ADD TASK MODAL
+// =====================================================
 
 function AddTaskModal({
     isOpen,
     onClose,
 }) {
-
     const toast = useToast();
-
 
     // =====================================================
     // STATES
@@ -61,239 +75,193 @@ function AddTaskModal({
     const [aiPrompt, setAiPrompt] =
         useState('');
 
-
     const [formData, setFormData] =
-        useState({
-            title: '',
-            description: '',
-            assignTo: '',
-            project: '',
-            startDate: '',
-            priority: 'Most Important',
-        });
+        useState(INITIAL_FORM_DATA);
 
+    // =====================================================
+    // TOKEN
+    // =====================================================
+
+    const token =
+        localStorage.getItem('tm_token');
 
     // =====================================================
     // AXIOS INSTANCE
     // =====================================================
 
-    const token =
-        localStorage.getItem(
-            'tm_token'
-        );
-
-
-    const axiosInstance =
-        axios.create({
+    const axiosInstance = useMemo(() => {
+        return axios.create({
             baseURL: API_URL,
+
             headers: {
                 Authorization:
-                    'Bearer ' + token,
+                    token
+                        ? `Bearer ${token}`
+                        : '',
+
                 'Content-Type':
                     'application/json',
             },
         });
-
+    }, [token]);
 
     // =====================================================
     // HANDLE INPUT CHANGE
     // =====================================================
 
     const handleChange = (e) => {
+        const {
+            name,
+            value,
+        } = e.target;
 
-        setFormData(
-            (previous) => ({
-                ...previous,
-                [e.target.name]:
-                    e.target.value,
-            })
-        );
-
+        setFormData((previous) => ({
+            ...previous,
+            [name]: value,
+        }));
     };
-
 
     // =====================================================
     // HANDLE PRIORITY
     // =====================================================
 
-    const handleTagClick = (
-        priority
-    ) => {
-
-        setFormData(
-            (previous) => ({
-                ...previous,
-                priority,
-            })
-        );
-
+    const handleTagClick = (priority) => {
+        setFormData((previous) => ({
+            ...previous,
+            priority,
+        }));
     };
-
 
     // =====================================================
     // GET EMPLOYEES
     // =====================================================
 
-    const getEmployees =
-        useCallback(async () => {
-
+    const getEmployees = useCallback(
+        async () => {
             try {
-
                 const response =
                     await axiosInstance.get(
                         '/api/employees/dropdown'
                     );
-
 
                 console.log(
                     'Employees response:',
                     response.data
                 );
 
-
                 if (
                     Array.isArray(
                         response.data
                     )
                 ) {
-
                     setEmployeesData(
                         response.data
                     );
-
                 } else {
-
                     setEmployeesData([]);
-
                 }
 
             } catch (error) {
-
                 console.error(
                     'Employees error:',
                     error
                 );
 
-
                 setEmployeesData([]);
-
 
                 const errorMessage =
                     error?.response?.data?.message ||
                     error?.message ||
                     'Failed to load employees';
 
-
                 toast({
-                    title:
-                        errorMessage,
-                    status:
-                        'error',
-                    position:
-                        'top',
-                    duration:
-                        4000,
-                    isClosable:
-                        true,
+                    title: errorMessage,
+                    status: 'error',
+                    position: 'top',
+                    duration: 4000,
+                    isClosable: true,
                 });
-
             }
-
-        }, [toast]);
-
+        },
+        [
+            axiosInstance,
+            toast,
+        ]
+    );
 
     // =====================================================
     // GET PROJECTS
     // =====================================================
 
-    const getProjects =
-        useCallback(async () => {
-
+    const getProjects = useCallback(
+        async () => {
             try {
-
                 const response =
                     await axiosInstance.get(
                         '/api/projects'
                     );
-
 
                 console.log(
                     'Projects response:',
                     response.data
                 );
 
-
                 if (
                     Array.isArray(
                         response.data
                     )
                 ) {
-
                     setProjectsData(
                         response.data
                     );
-
                 } else {
-
                     setProjectsData([]);
-
                 }
 
             } catch (error) {
-
                 console.error(
                     'Projects error:',
                     error
                 );
 
-
                 setProjectsData([]);
-
 
                 const errorMessage =
                     error?.response?.data?.message ||
                     error?.message ||
                     'Failed to load projects';
 
-
                 toast({
-                    title:
-                        errorMessage,
-                    status:
-                        'error',
-                    position:
-                        'top',
-                    duration:
-                        4000,
-                    isClosable:
-                        true,
+                    title: errorMessage,
+                    status: 'error',
+                    position: 'top',
+                    duration: 4000,
+                    isClosable: true,
                 });
-
             }
-
-        }, [toast]);
-
+        },
+        [
+            axiosInstance,
+            toast,
+        ]
+    );
 
     // =====================================================
     // LOAD EMPLOYEES + PROJECTS
     // =====================================================
 
     useEffect(() => {
-
         if (!isOpen) {
             return;
         }
 
-
         getEmployees();
         getProjects();
-
     }, [
         isOpen,
         getEmployees,
         getProjects,
     ]);
-
 
     // =====================================================
     // AI TASK GENERATION
@@ -303,35 +271,25 @@ function AddTaskModal({
         async () => {
 
             if (!aiPrompt.trim()) {
-
                 toast({
                     title:
                         'Please describe the task first',
-                    status:
-                        'warning',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'warning',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
                 return;
-
             }
-
 
             if (aiLoading) {
                 return;
             }
 
-
             setAiLoading(true);
 
-
             try {
-
                 const response =
                     await axiosInstance.post(
                         '/api/ai/generate-task',
@@ -341,25 +299,19 @@ function AddTaskModal({
                         }
                     );
 
-
                 console.log(
                     'AI task response:',
                     response.data
                 );
 
-
                 const aiTask =
                     response?.data?.result;
 
-
                 if (!aiTask) {
-
                     throw new Error(
                         'Invalid response from AI'
                     );
-
                 }
-
 
                 setFormData(
                     (previous) => ({
@@ -379,55 +331,38 @@ function AddTaskModal({
                     })
                 );
 
-
                 toast({
                     title:
                         'Task generated successfully',
-                    status:
-                        'success',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'success',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
             } catch (error) {
-
                 console.error(
                     'AI generation error:',
                     error
                 );
-
 
                 const errorMessage =
                     error?.response?.data?.message ||
                     error?.message ||
                     'Failed to generate task with AI';
 
-
                 toast({
-                    title:
-                        errorMessage,
-                    status:
-                        'error',
-                    position:
-                        'top',
-                    duration:
-                        5000,
-                    isClosable:
-                        true,
+                    title: errorMessage,
+                    status: 'error',
+                    position: 'top',
+                    duration: 5000,
+                    isClosable: true,
                 });
 
             } finally {
-
                 setAiLoading(false);
-
             }
-
         };
-
 
     // =====================================================
     // ADD TASK
@@ -438,209 +373,160 @@ function AddTaskModal({
 
             e.preventDefault();
 
-
             if (loading) {
                 return;
             }
 
+            // =================================================
+            // VALIDATION
+            // =================================================
 
             if (!formData.title.trim()) {
-
                 toast({
                     title:
                         'Please enter a task title',
-                    status:
-                        'warning',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'warning',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
                 return;
-
             }
-
 
             if (
                 !formData.description.trim()
             ) {
-
                 toast({
                     title:
                         'Please enter a task description',
-                    status:
-                        'warning',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'warning',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
                 return;
-
             }
 
-
             if (!formData.assignTo) {
-
                 toast({
                     title:
                         'Please select an employee',
-                    status:
-                        'warning',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'warning',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
                 return;
-
             }
 
-
             if (!formData.project) {
-
                 toast({
                     title:
                         'Please select a project',
-                    status:
-                        'warning',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'warning',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
                 return;
-
             }
 
-
             if (!formData.startDate) {
-
                 toast({
                     title:
                         'Please select a start date',
-                    status:
-                        'warning',
-                    position:
-                        'top',
-                    duration:
-                        3000,
-                    isClosable:
-                        true,
+                    status: 'warning',
+                    position: 'top',
+                    duration: 3000,
+                    isClosable: true,
                 });
 
                 return;
-
             }
-
 
             setLoading(true);
 
+            // =================================================
+            // API REQUEST
+            // =================================================
 
             try {
-
                 const response =
                     await axiosInstance.post(
                         '/api/task',
                         formData
                     );
 
-
                 console.log(
                     'Add task response:',
                     response.data
                 );
 
-
                 const message =
                     response?.data?.message ||
                     'Task added successfully';
 
+                // =================================================
+                // RESET FORM
+                // =================================================
 
                 setFormData({
-                    title: '',
-                    description: '',
-                    assignTo: '',
-                    project: '',
-                    startDate: '',
-                    priority:
-                        'Most Important',
+                    ...INITIAL_FORM_DATA,
                 });
-
 
                 setAiPrompt('');
 
+                // =================================================
+                // SUCCESS MESSAGE
+                // =================================================
 
                 toast({
-                    title:
-                        message,
-                    status:
-                        'success',
-                    position:
-                        'top',
-                    duration:
-                        5000,
-                    isClosable:
-                        true,
+                    title: message,
+                    status: 'success',
+                    position: 'top',
+                    duration: 5000,
+                    isClosable: true,
                 });
 
+                // =================================================
+                // CLOSE MODAL
+                // =================================================
 
                 onClose();
 
             } catch (error) {
-
                 console.error(
                     'Add task error:',
                     error
                 );
-
 
                 const errorMessage =
                     error?.response?.data?.message ||
                     error?.message ||
                     'Failed to add task';
 
-
                 toast({
-                    title:
-                        errorMessage,
-                    status:
-                        'error',
-                    position:
-                        'top',
-                    duration:
-                        5000,
-                    isClosable:
-                        true,
+                    title: errorMessage,
+                    status: 'error',
+                    position: 'top',
+                    duration: 5000,
+                    isClosable: true,
                 });
 
             } finally {
-
                 setLoading(false);
-
             }
-
         };
-
 
     // =====================================================
     // RENDER
     // =====================================================
 
     return (
-
         <Modal
             isOpen={isOpen}
             onClose={onClose}
@@ -648,28 +534,29 @@ function AddTaskModal({
             closeOnOverlayClick={false}
             isCentered
         >
-
             <ModalOverlay />
-
 
             <ModalContent>
 
                 <form
-                    onSubmit={
-                        handleSubmit
-                    }
+                    onSubmit={handleSubmit}
                 >
+
+                    {/* ================================================= */}
+                    {/* HEADER */}
+                    {/* ================================================= */}
 
                     <ModalHeader>
                         Add Task
                     </ModalHeader>
 
-
                     <ModalCloseButton />
 
+                    {/* ================================================= */}
+                    {/* BODY */}
+                    {/* ================================================= */}
 
                     <ModalBody>
-
 
                         {/* ================================================= */}
                         {/* AI GENERATOR */}
@@ -677,42 +564,32 @@ function AddTaskModal({
 
                         <div
                             style={{
-                                padding:
-                                    '15px',
-                                marginBottom:
-                                    '15px',
-                                borderRadius:
-                                    '10px',
-                                background:
-                                    '#f7f7f7',
+                                padding: '15px',
+                                marginBottom: '15px',
+                                borderRadius: '10px',
+                                background: '#f7f7f7',
                             }}
                         >
 
                             <p
                                 style={{
-                                    fontWeight:
-                                        '600',
-                                    marginBottom:
-                                        '8px',
+                                    fontWeight: '600',
+                                    marginBottom: '8px',
                                 }}
                             >
                                 ✨ Generate Task with AI
                             </p>
 
-
                             <Textarea
                                 rows={3}
                                 placeholder="Example: Prepare for a React interview next week"
-                                value={
-                                    aiPrompt
-                                }
+                                value={aiPrompt}
                                 onChange={(e) =>
                                     setAiPrompt(
                                         e.target.value
                                     )
                                 }
                             />
-
 
                             <Button
                                 mt={3}
@@ -725,23 +602,16 @@ function AddTaskModal({
                                     aiLoading
                                 }
                             >
-
                                 {aiLoading ? (
-
                                     <Spinner
                                         size="sm"
                                     />
-
                                 ) : (
-
                                     '✨ Generate with AI'
-
                                 )}
-
                             </Button>
 
                         </div>
-
 
                         {/* ================================================= */}
                         {/* TITLE */}
@@ -762,7 +632,6 @@ function AddTaskModal({
                             }
                         />
 
-
                         {/* ================================================= */}
                         {/* DESCRIPTION */}
                         {/* ================================================= */}
@@ -782,7 +651,6 @@ function AddTaskModal({
                             }
                         />
 
-
                         {/* ================================================= */}
                         {/* EMPLOYEE */}
                         {/* ================================================= */}
@@ -791,8 +659,7 @@ function AddTaskModal({
                             mt={3}
                             mb={3}
                             placeholder={
-                                employeesData.length >
-                                0
+                                employeesData.length > 0
                                     ? 'Assign To (Employee)'
                                     : 'No employees available'
                             }
@@ -805,42 +672,37 @@ function AddTaskModal({
                                 handleChange
                             }
                             isDisabled={
-                                employeesData.length ===
-                                0
+                                employeesData.length === 0
                             }
                         >
 
                             {employeesData.map(
-                                (employee) => (
+                                (employee) => {
 
-                                    <option
-                                        key={
-                                            employee.id ||
-                                            employee._id
-                                        }
-                                        value={
-                                            employee.id ||
-                                            employee._id
-                                        }
-                                    >
+                                    const employeeId =
+                                        employee.id ||
+                                        employee._id;
 
-                                        {
-                                            employee.name
-                                        }
+                                    return (
+                                        <option
+                                            key={
+                                                employeeId
+                                            }
+                                            value={
+                                                employeeId
+                                            }
+                                        >
+                                            {employee.name}
 
-                                        {
-                                            employee.role
+                                            {employee.role
                                                 ? ` (${employee.role})`
-                                                : ''
-                                        }
-
-                                    </option>
-
-                                )
+                                                : ''}
+                                        </option>
+                                    );
+                                }
                             )}
 
                         </Select>
-
 
                         {/* ================================================= */}
                         {/* PROJECT */}
@@ -850,8 +712,7 @@ function AddTaskModal({
                             mt={3}
                             mb={3}
                             placeholder={
-                                projectsData.length >
-                                0
+                                projectsData.length > 0
                                     ? 'Select Project'
                                     : 'No projects available'
                             }
@@ -864,14 +725,12 @@ function AddTaskModal({
                                 handleChange
                             }
                             isDisabled={
-                                projectsData.length ===
-                                0
+                                projectsData.length === 0
                             }
                         >
 
                             {projectsData.map(
                                 (project) => (
-
                                     <option
                                         key={
                                             project._id
@@ -880,18 +739,14 @@ function AddTaskModal({
                                             project._id
                                         }
                                     >
-
                                         {
                                             project.title
                                         }
-
                                     </option>
-
                                 )
                             )}
 
                         </Select>
-
 
                         {/* ================================================= */}
                         {/* START DATE */}
@@ -911,7 +766,6 @@ function AddTaskModal({
                             }
                         />
 
-
                         {/* ================================================= */}
                         {/* PRIORITY */}
                         {/* ================================================= */}
@@ -924,6 +778,7 @@ function AddTaskModal({
                                 Priority:
                             </p>
 
+                            {/* MOST IMPORTANT */}
 
                             <Tag
                                 size="lg"
@@ -941,13 +796,12 @@ function AddTaskModal({
                                     )
                                 }
                             >
-
                                 <span className="tag-text">
                                     Most Important
                                 </span>
-
                             </Tag>
 
+                            {/* IMPORTANT */}
 
                             <Tag
                                 size="lg"
@@ -965,13 +819,12 @@ function AddTaskModal({
                                     )
                                 }
                             >
-
                                 <span className="tag-text">
                                     Important
                                 </span>
-
                             </Tag>
 
+                            {/* LEAST IMPORTANT */}
 
                             <Tag
                                 size="lg"
@@ -989,17 +842,14 @@ function AddTaskModal({
                                     )
                                 }
                             >
-
                                 <span className="tag-text">
                                     Least Important
                                 </span>
-
                             </Tag>
 
                         </div>
 
                     </ModalBody>
-
 
                     {/* ================================================= */}
                     {/* FOOTER */}
@@ -1020,7 +870,6 @@ function AddTaskModal({
                             Close
                         </Button>
 
-
                         <Button
                             variant="outline"
                             type="submit"
@@ -1028,19 +877,13 @@ function AddTaskModal({
                                 loading
                             }
                         >
-
                             {loading ? (
-
                                 <Spinner
                                     color="green"
                                 />
-
                             ) : (
-
                                 'Add Task'
-
                             )}
-
                         </Button>
 
                     </ModalFooter>
@@ -1050,11 +893,7 @@ function AddTaskModal({
             </ModalContent>
 
         </Modal>
-
     );
-
 }
 
-
 export default AddTaskModal;
-
